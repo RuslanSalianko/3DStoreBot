@@ -1,0 +1,14 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      NODE_ENV: production
+    volumes:
+      - you_path/3DStoreBot/public:/app/backend/public
+      - you_path/3DStoreBot/db:/app/backend/db
+      - you_path/3DStoreBot/.env:/app/backend/.env
+    command: sh -c "prisma migrate deploy && npm run start:prod"
