@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ConfigModule } from '@nestjs/config';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
 import { BotModule } from './bot/bot.module';
 import { UserModule } from './user/user.module';
@@ -32,7 +30,5 @@ import { join } from 'path';
     AuthModule,
     ImageModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

@@ -38,7 +38,7 @@ export class BotUpdate extends Language {
       await ctx.scene.enter(SCENE_ID.initialization);
       return;
     }
-    const isRegisteredUser = await this.botService.verificationUser(telegramId);
+    const isRegisteredUser = await this.botService.isUserRegistered(telegramId);
 
     if (isRegisteredUser) {
       const user = await this.userService.findByTelegramId(telegramId);

@@ -23,7 +23,8 @@ export class LoginScene extends Language {
 
   @SceneEnter()
   async onSceneEnter(@Ctx() ctx: BotContext, @Sender() user: UserTelegram) {
-    const createUser = this.botService.transformUserTelegramInUserEntity(user);
+    const createUser =
+      this.botService.transformTelegramUserIntoUserEntity(user);
     const newUser = await this.userService.create(createUser);
     await this.messageService.admins(
       `${TEXT[this.language].newUser}\n ${this.createMessage.buildUserResponse(newUser)}`,

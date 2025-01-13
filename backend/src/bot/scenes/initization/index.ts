@@ -24,7 +24,7 @@ export class InitializationScene extends Language {
     @Ctx() ctx: BotContext,
     @Sender() user: User,
   ): Promise<void> {
-    const newUser = this.botService.transformUserTelegramInUserEntity(
+    const newUser = this.botService.transformTelegramUserIntoUserEntity(
       user,
       true,
     );

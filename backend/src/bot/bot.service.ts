@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { User as UserTelegram } from 'telegraf/typings/core/types/typegram';
+import { User as TelegramUser } from 'telegraf/typings/core/types/typegram';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { UserService } from 'src/user/user.service';
 
@@ -7,8 +7,8 @@ import { UserService } from 'src/user/user.service';
 export class BotService {
   constructor(private readonly userService: UserService) {}
 
-  transformUserTelegramInUserEntity(
-    user: UserTelegram,
+  transformTelegramUserIntoUserEntity(
+    user: TelegramUser,
     isAdmin = false,
   ): CreateUserDto {
     return {
@@ -19,7 +19,7 @@ export class BotService {
       isAdmin,
     };
   }
-  async verificationUser(telegramId: number): Promise<boolean> {
+  async isUserRegistered(telegramId: number): Promise<boolean> {
     return Boolean(await this.userService.findByTelegramId(telegramId));
   }
 }
