@@ -12,10 +12,10 @@ export const Route = createFileRoute('/login')({
 });
 
 function Login() {
-  const { isAuth } = useAuth();
+  const { isAuthenticated } = useAuth();
   return (
     <>
-      {isAuth && <Navigate to="/dashboard" />}
+      {isAuthenticated && <Navigate to="/dashboard" />}
       <Container maxWidth="sm" sx={{ mt: 8, p: 8 }}>
         <Typography variant="h4" textAlign="center">
           Sign in

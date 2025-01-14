@@ -8,7 +8,7 @@ import { IAuthResponse } from '@models/response/auth';
 
 export type AuthStore = {
   user: IUser | null;
-  isAuth: boolean;
+  isAuthenticated: boolean;
   isGetPassword: boolean;
   errorMessage: string;
   getPassword: (email: string) => Promise<void>;
@@ -21,7 +21,7 @@ export type AuthStore = {
 const defaultState = {
   user: null,
   errorMessage: '',
-  isAuth: false,
+  isAuthenticated: false,
   isGetPassword: false,
 };
 
@@ -42,7 +42,7 @@ export const useAuth = create<AuthStore>((set) => ({
       const response = await AuthService.login(email, password);
       localStorage.setItem('token', response.data.accessToken);
 
-      set({ user: response.data.user, isAuth: true });
+      set({ user: response.data.user, isAuthenticated: true });
     } catch (error) {
       set({ ...defaultState, errorMessage: 'Invalid login or password' });
       console.log(error);
@@ -64,7 +64,7 @@ export const useAuth = create<AuthStore>((set) => ({
     try {
       const response = await AuthService.refresh();
 
-      set({ user: response.data.user, isAuth: true });
+      set({ user: response.data.user, isAuthenticated: true });
       localStorage.setItem('token', response.data.accessToken);
       return response.data;
     } catch (error) {

@@ -6,9 +6,9 @@ export const Route = createFileRoute('/_authenticated')({
 });
 
 function Authenticated() {
-  const { isAuth } = useAuth();
+  const { isAuthenticated } = useAuth();
 
-  if (!isAuth) {
+  if (!isAuthenticated) {
     return <Navigate to="/login" />;
   }
   return <Outlet />;

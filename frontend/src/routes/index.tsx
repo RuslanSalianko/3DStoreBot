@@ -7,8 +7,14 @@ export const Route = createFileRoute('/')({
 });
 
 function Home() {
-  const { isAuth } = useAuth();
+  const { isAuthenticated } = useAuth();
   return (
-    <>{!isAuth ? <Navigate to="/login" /> : <Navigate to="/dashboard" />}</>
+    <>
+      {!isAuthenticated ? (
+        <Navigate to="/login" />
+      ) : (
+        <Navigate to="/dashboard" />
+      )}
+    </>
   );
 }
