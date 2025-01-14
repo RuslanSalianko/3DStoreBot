@@ -1,7 +1,7 @@
 import $api from '@/http';
 import { IFile } from '@models/file.interface';
-import { urlUtils } from '../utils/url';
 import { API_URL } from '../http';
+import { buildUrlWithParams } from '@utils/url';
 
 type QueryFindAll = {
   day?: string;
@@ -11,7 +11,7 @@ type QueryFindAll = {
 
 export const FileService = {
   findAll: async (query: QueryFindAll): Promise<IFile[]> => {
-    const url = urlUtils.buildUrlWithParams('/file', query);
+    const url = buildUrlWithParams('/file', query);
     return (await $api.get<IFile[]>(url)).data;
   },
   downloadFile: async (uuid: string, format: string): Promise<void> => {

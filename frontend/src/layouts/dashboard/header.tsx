@@ -17,7 +17,7 @@ import Iconify from '@components/iconify';
 import { NAV, HEADER } from './config';
 import AccountPopover from './common/account-popover';
 import { useLocation } from '@tanstack/react-router';
-import { stringUtils } from '../../utils/string';
+import { capitalize } from '@utils/string';
 
 // ----------------------------------------------------------------------
 
@@ -54,7 +54,7 @@ export default function Header({ onOpenNav }: Props) {
           fontWeight: 600,
         }}
       >
-        {stringUtils.capitalize(pathname.split('/').pop() || '')}
+        {capitalize(pathname.split('/').pop() || '')}
       </Typography>
       <Box sx={{ flexGrow: 1 }} />
       <Stack direction="row" alignItems="center" spacing={1}>
