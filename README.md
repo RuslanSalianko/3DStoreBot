@@ -77,7 +77,7 @@ This project is a solution for managing and storing 3D printing files that can b
    docker compose up -d
    ```
 
-6. Go to the Telegram bot and run the /start command
+6. Go to the Telegram bot and run the **/start** command
 7. The bot will then request an email (can be any email, even a non-existent one in the format mail@example.com), which will be used to log in to the web panel
 
 ## 📂 Usage
@@ -85,7 +85,7 @@ This project is a solution for managing and storing 3D printing files that can b
 To save files from Telegram channels, use the following algorithm:
 
 1. First, forward a post with photos and file description.
-2. Then, forward an archive with print files.
+2. Then send the archive with the files for printing.
 
 ## ⚠️ Limitations
 
@@ -95,10 +95,11 @@ To save files from Telegram channels, use the following algorithm:
 ## 🚀 Future Plans
 
 - [ ] Handling archives larger than 20 MB
-- [ ] Processing first post with gif, video
+- [ ] Processing of the first post with gif, video
 - [ ] Implementing multilingualism using i18next
 - [ ] Saving files if a single post contains both photo and archive
 - [ ] Saving files from sites like printables.com, thingiverse.com, thangs.com, etc.
 
 📜 License
 [MIT](https://github.com/RuslanSalianko/3DStoreBot/blob/master/LICENSE)
+
