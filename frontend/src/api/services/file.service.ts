@@ -1,6 +1,5 @@
-import $api from '@/http';
+import $api, { API_URL } from '@/api';
 import { IFile } from '@models/file.interface';
-import { API_URL } from '../http';
 import { buildUrlWithParams } from '@utils/url';
 
 type QueryFindAll = {

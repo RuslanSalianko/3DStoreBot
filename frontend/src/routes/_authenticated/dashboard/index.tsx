@@ -1,9 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { OverviewAnalyticsView } from '../../../sections/overview/view/overview-analytics-view';
-import { FileService } from '../../../services/file.service';
-import { FilesViewMini } from '@/sections/files/view';
 import Typography from '@mui/material/Typography';
+
+import { OverviewAnalyticsView } from '@sections/overview/view/overview-analytics-view';
+import { FileService } from '@services/file.service';
+import { FilesViewMini } from '@sections/files/view';
 
 export const Route = createFileRoute('/_authenticated/dashboard/')({
   loader: async () => {
@@ -27,6 +28,7 @@ export const Route = createFileRoute('/_authenticated/dashboard/')({
 
 function RouteComponent() {
   const data = Route.useLoaderData();
+
   return (
     <>
       <OverviewAnalyticsView {...data} />

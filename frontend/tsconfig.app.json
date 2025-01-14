@@ -32,7 +32,7 @@
       "@hooks/*": ["hooks/*"],
       "@sections/*": ["sections/*"],
       "@utils/*": ["utils/*"],
-      "@services/*": ["services/*"],
+      "@services/*": ["api/services/*"],
       "@theme/*": ["theme/*"]
     }
   },

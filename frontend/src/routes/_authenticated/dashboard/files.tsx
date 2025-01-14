@@ -1,5 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { FileService } from '../../../services/file.service';
+
+import { FileService } from '@services/file.service';
+
 import Page from '@components/page/Page';
 import FilesView from '@sections/files/view';
 import { IFile } from '@models/file.interface';

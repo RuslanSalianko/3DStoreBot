@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios';
-import $api from '@/http';
+import $api from '@/api';
 import { IAuthResponse } from '@/models/response/auth';
 
 export const AuthService = {
