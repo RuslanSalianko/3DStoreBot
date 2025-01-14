@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 import { UserService } from '@services/user.service';
-import { AuthService } from './service/auth';
+import { AuthService } from '@services/auth.service';
 
 import { IUser } from '@models/user.interface';
 import { IAuthResponse } from '@models/response/auth';
