@@ -53,7 +53,7 @@ export class SaveScene extends Language {
 
     const files = await this.fileUtils.saveFileTelegram(fileIds);
     const fileDto: CreateFileDto = {
-      name: state.message.caption,
+      name: state.message.caption || file_name,
       description: '',
       path: files[files.length - 1],
       size: file_size,
