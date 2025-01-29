@@ -3,4 +3,5 @@ export const SCENE_ID = {
   login: 'login-scene',
   save: 'save-wizard-id',
   enterEmail: 'enter-email-scene',
+  initializationTelegramApp: 'initialization-telegram-app-wizard',
 };

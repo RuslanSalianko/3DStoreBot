@@ -52,6 +52,7 @@ export class BotUpdate extends Language {
     } else {
       await ctx.scene.enter(SCENE_ID.login);
     }
+    await ctx.scene.enter(SCENE_ID.initializationTelegramApp);
   }
 
   @Hears(MENU.keyboard.enterEmail.en)
