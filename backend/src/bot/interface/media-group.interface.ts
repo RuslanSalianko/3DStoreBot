@@ -1,4 +1,7 @@
 export interface IMediaGroup {
   caption: string;
-  photos: string[];
+  messages: {
+    messageId: number;
+    chatId: number;
+  }[];
 }

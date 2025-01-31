@@ -17,6 +17,7 @@ import { Message as MessageTelegram } from 'telegraf/typings/core/types/typegram
 import { IMediaGroup } from './interface/media-group.interface';
 import { KeyboardMenu } from './menu/keyboard';
 import { MENU } from './constants/menu.constants';
+import { TelegramService } from './telegram.service';
 
 @Update()
 export class BotUpdate extends Language {
@@ -26,6 +27,7 @@ export class BotUpdate extends Language {
     private readonly userService: UserService,
     private readonly botService: BotService,
     private readonly menu: KeyboardMenu,
+    private readonly telegramService: TelegramService,
   ) {
     super(new ConfigService());
   }
@@ -63,23 +65,27 @@ export class BotUpdate extends Language {
   @On('message')
   async photo(
     @Ctx() ctx: BotContext,
-    @Message() message: MessageTelegram.PhotoMessage,
+    @Message()
+    message: MessageTelegram.PhotoMessage & MessageTelegram.VideoMessage,
   ) {
-    console.log(message);
-    if (message.photo && message.forward_origin) {
+    if ((message.photo || message.video) && message.forward_origin) {
       if (message.media_group_id) {
-        const largestPhoto = message.photo[message.photo.length - 1].file_id;
-
         if (this.processedMediaGroups.has(message.media_group_id)) {
-          this.processedMediaGroups
-            .get(message.media_group_id)
-            .photos.push(largestPhoto);
+          this.processedMediaGroups.get(message.media_group_id).messages.push({
+            messageId: message.message_id,
+            chatId: message.chat.id,
+          });
           return;
         }
 
         this.processedMediaGroups.set(message.media_group_id, {
           caption: message.caption,
-          photos: [largestPhoto],
+          messages: [
+            {
+              messageId: message.message_id,
+              chatId: message.chat.id,
+            },
+          ],
         });
 
         // delete processed media group

@@ -10,6 +10,7 @@ import { UtilModule } from './util/util.module';
 import { AuthModule } from './auth/auth.module';
 import { ImageModule } from './image/image.module';
 import { join } from 'path';
+import { SettingModule } from './setting/setting.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { join } from 'path';
     UtilModule,
     AuthModule,
     ImageModule,
+    SettingModule,
   ],
 })
 export class AppModule {}

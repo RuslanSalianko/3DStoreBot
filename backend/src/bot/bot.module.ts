@@ -10,7 +10,8 @@ import { CreateMessageService } from './create-message.service';
 import { MessageService } from './message.service';
 import { FileModule } from 'src/file/file.module';
 import { keyboard } from './menu/keyboard';
-import { AuthTelegramService } from './auth-telegram.service';
+import { TelegramService } from './telegram.service';
+import { SettingModule } from 'src/setting/setting.module';
 
 @Global()
 @Module({
@@ -31,13 +32,14 @@ import { AuthTelegramService } from './auth-telegram.service';
     }),
     UserModule,
     FileModule,
+    SettingModule,
   ],
   providers: [
     BotUpdate,
     BotService,
     CreateMessageService,
     MessageService,
-    AuthTelegramService,
+    TelegramService,
     ...scenes,
     ...keyboard,
   ],

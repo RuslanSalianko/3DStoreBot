@@ -1,7 +1,6 @@
-import { createWriteStream, existsSync, mkdirSync, unlink } from 'fs';
+import { createWriteStream, existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { randomUUID } from 'crypto';
-import * as https from 'https';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DateService } from './date.service';
@@ -15,50 +14,27 @@ export class FileService {
     private readonly dateService: DateService,
   ) {}
 
-  async saveFileTelegram(fileIds: string[]): Promise<string[]> {
-    const pathFiles: string[] = [];
-    const dir = this.fileDir();
+  async saveFileTelegramByBuffer(
+    byffer: Buffer,
+    filePath: string,
+  ): Promise<string> {
+    const writeStream = createWriteStream(filePath);
 
-    for (const fileId of fileIds) {
-      const response = await fetch(
-        `https://api.telegram.org/bot${this.configService.get('TELEGRAM_BOT_TOKEN')}/getFile?file_id=${fileId}`,
-      );
+    writeStream.write(byffer);
+    writeStream.end();
 
-      const data = await response.json();
-      if (!data.ok) {
-        throw new Error(Errors[this.language].notFoundFileTelegram);
-      }
+    writeStream.on('finish', () => {
+      writeStream.close();
+    });
 
-      const fileUrl = `https://api.telegram.org/file/bot${this.configService.get('TELEGRAM_BOT_TOKEN')}/${data.result.file_path}`;
-      const file = await this.saveFile(fileUrl, dir);
+    writeStream.on('error', () => {
+      Logger.error('Error download file:');
+    });
 
-      pathFiles.push(file);
-    }
-
-    return pathFiles;
-  }
-
-  private async saveFile(url: string, dir: string): Promise<string> {
-    const fileName = url.split('/').pop();
-    const filePath = join(dir, fileName);
-    const file = createWriteStream(filePath);
-
-    https
-      .get(url, (response) => {
-        response.pipe(file);
-
-        file.on('finish', () => {
-          file.close();
-        });
-      })
-      .on('error', (err) => {
-        unlink(filePath, () => {});
-        Logger.error('Error download file:', err.message);
-      });
     return filePath;
   }
 
-  private fileDir(): string {
+  fileDir(): string {
     const uuid = randomUUID();
     const dir = join(
       this.configService.get('UPLOAD_DIR'),
