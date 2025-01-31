@@ -52,7 +52,6 @@ export class BotUpdate extends Language {
     } else {
       await ctx.scene.enter(SCENE_ID.login);
     }
-    await ctx.scene.enter(SCENE_ID.initializationTelegramApp);
   }
 
   @Hears(MENU.keyboard.enterEmail.en)
@@ -66,6 +65,7 @@ export class BotUpdate extends Language {
     @Ctx() ctx: BotContext,
     @Message() message: MessageTelegram.PhotoMessage,
   ) {
+    console.log(message);
     if (message.photo && message.forward_origin) {
       if (message.media_group_id) {
         const largestPhoto = message.photo[message.photo.length - 1].file_id;

@@ -1,13 +1,9 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  BadRequestException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import bigInt from 'big-integer';
+import { join } from 'path';
+import { createWriteStream } from 'fs';
 import { TelegramClient } from 'telegram';
 import { StringSession } from 'telegram/sessions';
-import { Api } from 'telegram/tl';
 
 @Injectable()
 export class AuthTelegramService {
@@ -15,91 +11,66 @@ export class AuthTelegramService {
   private apiId: number;
   private apiHash: string;
   private session: StringSession;
-  private phoneCodeHash: string;
 
   constructor(private readonly configService: ConfigService) {
-    this.apiId = this.configService.get('apiId');
-    this.apiHash = this.configService.get('apiHash');
-    this.session = new StringSession(''); // Пустая сессия
+    this.apiId = Number(this.configService.get<string>('TELEGRAM_APP_API_ID'));
+    this.apiHash = this.configService.get<string>('TELEGRAM_APP_API_HASH');
+    this.session = new StringSession('');
     this.client = new TelegramClient(this.session, this.apiId, this.apiHash, {
       connectionRetries: 5,
     });
   }
-  async sendCode(phoneNumber: string) {
-    await this.client.connect();
 
+  async loginBot() {
     try {
-      const result = await this.client.invoke(
-        new Api.auth.SendCode({
-          phoneNumber,
-          apiId: this.client.apiId,
-          apiHash: this.client.apiHash,
-          settings: new Api.CodeSettings({
-            allowFlashcall: false,
-            currentNumber: false,
-            allowAppHash: true,
-          }),
-        }),
-      );
-
-      if ('phoneCodeHash' in result) {
-        this.phoneCodeHash = result.phoneCodeHash;
-      } else {
-        throw new InternalServerErrorException(
-          'Не удалось получить phoneCodeHash',
-        );
-      }
-
-      return {
-        message: 'Код отправлен на телефон',
-        phoneCodeHash: this.phoneCodeHash,
-      };
+      await this.client.start({
+        botAuthToken: this.configService.get('TELEGRAM_BOT_TOKEN'),
+      });
+      console.log(this.client.session.save());
     } catch (error) {
-      console.error('Ошибка при отправке кода:', error);
-      throw new InternalServerErrorException('Не удалось отправить код');
+      console.log('-----loginBot----');
+      console.log(error);
     }
   }
 
-  async login(phoneNumber: string, code: string, password?: string) {
+  async downloadFile(chatId: number, messageId: number) {
     try {
-      const result = await this.client.invoke(
-        new Api.auth.SignIn({
-          phoneNumber,
-          phoneCode: code,
-          phoneCodeHash: this.phoneCodeHash,
-        }),
-      );
+      await this.client.connect();
+      const message = await this.client.getMessages(chatId, {
+        ids: messageId,
+      });
 
-      if (result.className === 'auth.AuthorizationSignUpRequired') {
-        throw new BadRequestException(
-          'Требуется регистрация нового пользователя',
-        );
+      if (message[0].media) {
+        const filePath = join(__dirname, 'downloaded_file');
+        console.log(filePath);
+        const writeStream = createWriteStream(filePath);
+        const document = message[0].media['document'];
+
+        const downloadResult = await this.client.downloadMedia(document, {
+          //progressCallback: ({ downloaded, total }) => {
+          //  console.log(
+          //    `Download: ${((downloaded / total) * 100).toFixed(2)} %`,
+          //  );
+          //},
+        });
+
+        if (downloadResult instanceof Buffer) {
+          writeStream.write(downloadResult);
+          writeStream.end();
+        } else {
+          console.log('Файл не был скачан как Buffer');
+        }
+
+        writeStream.on('finish', () => {
+          console.log('Файл успешно сохранен:', filePath);
+        });
+
+        writeStream.on('error', (err) => {
+          console.error('Ошибка при записи файла:', err);
+        });
       }
-
-      if (password) {
-        await this.client.invoke(
-          new Api.auth.CheckPassword({
-            password: new Api.InputCheckPasswordSRP({
-              srpId: bigInt(0),
-              A: Buffer.from(password),
-              M1: Buffer.from(''),
-            }),
-          }),
-        );
-      }
-
-      return {
-        message: 'Авторизация успешна!',
-        session: this.client.session.save(),
-      };
     } catch (error) {
-      if (error.errorMessage === 'PHONE_CODE_EXPIRED') {
-        throw new BadRequestException(
-          'Код подтверждения истёк. Запросите новый код.',
-        );
-      }
-      console.error('Ошибка при авторизации:', error);
-      throw new InternalServerErrorException('Авторизация не удалась');
+      console.log(error);
     }
   }
 }
