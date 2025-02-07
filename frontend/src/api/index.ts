@@ -1,7 +1,9 @@
 import axios from 'axios';
 import { IAuthResponse } from '@/models/response/auth';
 
-export const API_URL = import.meta.env.VITE_APP_API_URL;
+const hosthame = window.location.hostname;
+export const API_URL =
+  import.meta.env.VITE_APP_API_URL || `https://${hosthame}/api`;
 
 const $api = axios.create({
   withCredentials: true,

@@ -1,4 +1,4 @@
-FROM node:22 as builder
+FROM node:22 AS builder
 
 WORKDIR /app
 
@@ -15,7 +15,7 @@ WORKDIR /app/frontend
 RUN npm install
 RUN npm run build
 
-FROM node:22.12.0-alpine as production
+FROM node:22.12.0-alpine AS production
 RUN apk add --no-cache openssl
 
 WORKDIR /app
@@ -30,4 +30,4 @@ RUN npm install --production
 
 EXPOSE 5000
 
-CMD ["sh", "-c", "prisma migrate deploy && npm run start:prod"]
+CMD ["bash", "-c", "prisma migrate deploy && npm run start:prod"]
