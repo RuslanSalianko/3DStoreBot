@@ -104,7 +104,12 @@ export class BotUpdate extends Language {
         await ctx.scene.enter(SCENE_ID.save, {
           message: {
             caption: message.caption,
-            photos: [largestPhoto],
+            messages: [
+              {
+                messageId: message.message_id,
+                chatId: message.chat.id,
+              },
+            ],
           },
         });
       }

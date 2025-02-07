@@ -1,0 +1,22 @@
+stages:
+  - build
+build-docker:
+  stage: build
+  image: docker:stable
+  tags:
+    - docker
+  only:
+    - master
+  services:
+    - name: docker:dind
+      alias: thedockerhost
+
+  variables:
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_HOST: "tcp://thedockerhost:2375"
+    DOCKER_DRIVER: overlay2
+  before_script:
+    - docker login -u Deployer -p ${ACCESS_TOKEN_REGISTRY} ${URL_REGISTRY}
+  script:
+    - docker build -t ${URL_REGISTRY}/${PATH_PROJECT}:${CI_COMMIT_REF_NAME} --build-arg branch=${CI_COMMIT_REF_NAME} .
+    - docker push ${URL_REGISTRY}/${PATH_PROJECT}:${CI_COMMIT_REF_NAME}
