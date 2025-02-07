@@ -7,7 +7,6 @@ import {
   SceneLeave,
 } from 'nestjs-telegraf';
 import { ConfigService } from '@nestjs/config';
-import { FileService as FileUtilsService } from 'src/util/services/file.service';
 import { FileService } from 'src/file/file.service';
 import { UserService } from 'src/user/user.service';
 import { Language } from 'src/bot/language';
@@ -17,13 +16,14 @@ import { BotContext } from 'src/bot/interface/bot-context.type';
 import { Message as MessageTelegram } from 'telegraf/typings/core/types/typegram';
 import { IMediaGroup } from 'src/bot/interface/media-group.interface';
 import { CreateFileDto } from 'src/file/dto/create-file.dto';
+import { TelegramService } from 'src/bot/telegram.service';
 
 @Scene(SCENE_ID.save)
 export class SaveScene extends Language {
   constructor(
-    private readonly fileUtils: FileUtilsService,
     private readonly fileService: FileService,
     private readonly userService: UserService,
+    private readonly telegramService: TelegramService,
   ) {
     super(new ConfigService());
   }
@@ -38,20 +38,19 @@ export class SaveScene extends Language {
     @Ctx() ctx: BotContext,
     @Message() message: MessageTelegram.DocumentMessage,
   ) {
-    if (message.document.file_size > 20 * 1024 * 1024) {
-      await ctx.reply(TEXT[this.language].error.fileSize);
-      return;
-    }
-
     const state = ctx.scene.state as { message: IMediaGroup };
     const user = await this.userService.findByTelegramId(ctx.from.id);
 
-    const { file_id, file_name, file_size } = message.document;
+    const { file_name, file_size } = message.document;
 
-    const fileIds = state.message.photos;
-    fileIds.push(file_id);
+    const downloadMessages = state.message.messages;
+    downloadMessages.push({
+      messageId: message.message_id,
+      chatId: message.chat.id,
+    });
 
-    const files = await this.fileUtils.saveFileTelegram(fileIds);
+    const files = await this.telegramService.downloadFiles(downloadMessages);
+
     const fileDto: CreateFileDto = {
       name: state.message.caption || file_name,
       description: '',
