@@ -1,11 +1,4 @@
-import {
-  Ctx,
-  Message,
-  On,
-  Scene,
-  SceneEnter,
-  SceneLeave,
-} from 'nestjs-telegraf';
+import { Ctx, Message, On, Scene, SceneEnter } from 'nestjs-telegraf';
 import { ConfigService } from '@nestjs/config';
 import { FileService } from 'src/file/file.service';
 import { UserService } from 'src/user/user.service';
@@ -67,10 +60,5 @@ export class SaveScene extends Language {
     });
 
     await ctx.scene.leave();
-  }
-
-  @SceneLeave()
-  async leave(@Ctx() ctx: BotContext) {
-    await ctx.reply('OK');
   }
 }
