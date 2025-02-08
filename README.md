@@ -53,32 +53,21 @@ This project is a solution for managing and storing 3D printing files that can b
    openssl rand -base64 32
    ```
 
-3. Rename the frontend .env.production.example file to .env.production and fill it out:
-
-   ```bash
-   cd ../frontend
-   mv .env.production.example .env.production
-   ```
-
-   ```env
-   VITE_API_URL=https://example.com/api
-   ```
-
-4. Specify volumes in docker-compose.yml:
+3. Specify volumes in docker-compose.yml:
 
    ```bash
    cd ..
    nano docker-compose.yml
    ```
 
-5. Start the project:
+4. Start the project:
 
    ```bash
    docker compose up -d
    ```
 
-6. Go to the Telegram bot and run the **/start** command
-7. The bot will then request an email (can be any email, even a non-existent one in the format mail@example.com), which will be used to log in to the web panel
+5. Go to the Telegram bot and run the **/start** command
+6. The bot will then request an email (can be any email, even a non-existent one in the format mail@example.com), which will be used to log in to the web panel
 
 ## 📂 Usage
 
@@ -89,12 +78,11 @@ To save files from Telegram channels, use the following algorithm:
 
 ## ⚠️ Limitations
 
-1. Archive no larger than 20 MB
-2. First post must only contain photos
+1. First post must only contain photos
 
 ## 🚀 Future Plans
 
-- [ ] Handling archives larger than 20 MB
+- [x] Handling archives larger than 20 MB
 - [ ] Processing of the first post with gif, video
 - [ ] Implementing multilingualism using i18next
 - [ ] Saving files if a single post contains both photo and archive
@@ -102,4 +90,3 @@ To save files from Telegram channels, use the following algorithm:
 
 📜 License
 [MIT](https://github.com/RuslanSalianko/3DStoreBot/blob/master/LICENSE)
-
