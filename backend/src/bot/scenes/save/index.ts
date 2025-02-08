@@ -44,22 +44,28 @@ export class SaveScene extends Language {
     const { file_name, file_size } = message.document;
 
     const downloadMessages = state.message.messages;
+
     downloadMessages.push({
       messageId: message.message_id,
       chatId: message.chat.id,
     });
 
-    const files = await this.telegramService.downloadFiles(downloadMessages);
+    this.telegramService.downloadFiles(downloadMessages).then((files) => {
+      const fileDto: CreateFileDto = {
+        name: state.message.caption || file_name,
+        description: '',
+        path: files[files.length - 1],
+        size: file_size,
+        format: file_name.split('.').pop(),
+      };
 
-    const fileDto: CreateFileDto = {
-      name: state.message.caption || file_name,
-      description: '',
-      path: files[files.length - 1],
-      size: file_size,
-      format: file_name.split('.').pop(),
-    };
-    const images = files.slice(0, files.length - 1);
-    await this.fileService.create(fileDto, user.id, images);
+      const images = files.slice(0, files.length - 1);
+
+      this.fileService.create(fileDto, user.id, images).then(() => {
+        ctx.reply(TEXT[this.language].complete);
+      });
+    });
+
     await ctx.scene.leave();
   }
 

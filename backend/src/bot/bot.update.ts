@@ -100,7 +100,6 @@ export class BotUpdate extends Language {
           this.processedMediaGroups.delete(message.media_group_id);
         }, 60000);
       } else {
-        const largestPhoto = message.photo[message.photo.length - 1].file_id;
         await ctx.scene.enter(SCENE_ID.save, {
           message: {
             caption: message.caption,

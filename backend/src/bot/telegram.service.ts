@@ -5,10 +5,16 @@ import { StringSession } from 'telegram/sessions';
 import { SettingService } from 'src/setting/setting.service';
 import { FileService } from 'src/util/services/file.service';
 import { join } from 'node:path';
+import { TEXT, TText } from 'src/bot/constants/telegram.constants';
+import { _pin } from 'telegram/client/messages';
+import { TimeInterval } from 'rxjs/internal/operators/timeInterval';
 
 @Injectable()
 export class TelegramService implements OnModuleInit {
   private client: TelegramClient;
+  private apiId: number;
+  private apiHash: string;
+  private text: TText;
 
   constructor(
     private readonly configService: ConfigService,
@@ -17,19 +23,57 @@ export class TelegramService implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    const apiId = Number(this.configService.get<string>('TELEGRAM_APP_API_ID'));
-    const apiHash = this.configService.get<string>('TELEGRAM_APP_API_HASH');
+    this.apiId = Number(this.configService.get<string>('TELEGRAM_APP_API_ID'));
+    this.apiHash = this.configService.get<string>('TELEGRAM_APP_API_HASH');
+    this.text = TEXT[this.configService.get<string>('LANG_APP') || 'en'];
 
     const setting =
       (await this.settingService.findByKey('telegram-session'))?.value || '';
+
     const session = new StringSession(setting);
 
-    this.client = new TelegramClient(session, apiId, apiHash, {
+    this.client = new TelegramClient(session, this.apiId, this.apiHash, {
       connectionRetries: 5,
     });
+
+    if (setting === '') {
+      await this.loginBot();
+    }
+    //try {
+    //  const isConnected = await this.client.connect();
+    //  Logger.error(`isConnected: ${isConnected}`);
+    //  Logger.error(`Authorized: {${await this.client.isUserAuthorized()}}`);
+    //
+    //  if (!isConnected) {
+    //    Logger.warn('Telegram client restart');
+    //    await this.restart();
+    //  }
+    //} catch (error) {
+    //  Logger.error('-----onModuleInit----');
+    //  Logger.error(error);
+    //}
   }
 
-  async loginBot() {
+  async restart(): Promise<void> {
+    try {
+      await this.client.destroy();
+      this.client = new TelegramClient(
+        new StringSession(''),
+        this.apiId,
+        this.apiHash,
+        {
+          connectionRetries: 5,
+        },
+      );
+
+      await this.loginBot();
+    } catch (error) {
+      Logger.error('-----restart----');
+      Logger.error(error);
+    }
+  }
+
+  async loginBot(): Promise<void> {
     try {
       await this.client.start({
         botAuthToken: this.configService.get('TELEGRAM_BOT_TOKEN'),
@@ -48,55 +92,23 @@ export class TelegramService implements OnModuleInit {
 
   async downloadFiles(
     downloadsMessage: { chatId: number; messageId: number }[],
-  ) {
+  ): Promise<string[]> {
     try {
       const filesName: string[] = [];
       const dir = this.fileService.fileDir();
 
+      await this.client.connect();
+
       for (const { chatId, messageId } of downloadsMessage) {
-        await this.client.connect();
         const message = await this.client.getMessages(chatId, {
           ids: messageId,
         });
 
         if (message[0].media) {
-          const { media } = message[0];
-          const downloadResult = await this.client.downloadMedia(
-            message[0].media,
-            {
-              progressCallback: (downloaded, total) => {
-                //console.log(
-                //  `Progress: ${Number((Number(downloaded) / Number(total)) * 100).toFixed(2)}%`,
-                //);
-              },
-            },
-          );
+          const downloadResult = await this.downloadMedia(message[0]);
 
           if (downloadResult instanceof Buffer) {
-            let fileName = '';
-
-            switch (media.className) {
-              case 'MessageMediaPhoto':
-                const photo = media.photo as Api.Photo;
-                fileName = `photo_${photo.id}.jpg`;
-                break;
-              case 'MessageMediaDocument':
-                const document = media.document as Api.Document;
-                const mimeType = document.mimeType;
-                const isVideo = document.attributes.some(
-                  (attr) => attr.className === 'DocumentAttributeVideo',
-                );
-
-                fileName = isVideo
-                  ? `video_${document.id}.${mimeType.split('/')[1]}`
-                  : document.attributes[0]['fileName'];
-                break;
-
-              default:
-                Logger.warn('Media type not supported');
-                break;
-            }
-
+            const fileName = await this.createFileName(message[0]);
             const file = await this.fileService.saveFileTelegramByBuffer(
               downloadResult,
               join(dir, fileName),
@@ -112,6 +124,74 @@ export class TelegramService implements OnModuleInit {
     } catch (error) {
       Logger.error('-----downloadFile----');
       Logger.error(error);
+
+      return [];
     }
+  }
+
+  private async downloadMedia(
+    message: Api.Message,
+  ): Promise<string | Buffer | undefined> {
+    const chat = await this.client.getEntity(message.chatId);
+    const messageProgress = await this.client.sendMessage(chat, {
+      message: this.text.downloadingFile,
+    });
+
+    let index = 0;
+
+    return this.client.downloadMedia(message.media, {
+      progressCallback: async (downloaded, total) => {
+        const progress = Number(
+          (Number(downloaded) / Number(total)) * 100,
+        ).toFixed(2);
+        if (index % 50 === 0) {
+          await this.client.editMessage(chat, {
+            message: messageProgress.id,
+            text: `${this.text.downloadingFile}: ${progress}%`,
+          });
+        }
+
+        if (progress === '100.00') {
+          await this.client.deleteMessages(chat, [messageProgress.id], {
+            revoke: true,
+          });
+        }
+        index++;
+      },
+    });
+  }
+
+  private async createFileName(message: Api.Message): Promise<string> {
+    const chat = await this.client.getEntity(message.chatId);
+
+    const { media } = message;
+    let fileName = '';
+
+    switch (media.className) {
+      case 'MessageMediaPhoto':
+        const photo = media.photo as Api.Photo;
+        fileName = `photo_${photo.id}.jpg`;
+        break;
+      case 'MessageMediaDocument':
+        const document = media.document as Api.Document;
+        const mimeType = document.mimeType;
+        const isVideo = document.attributes.some(
+          (attr) => attr.className === 'DocumentAttributeVideo',
+        );
+
+        fileName = isVideo
+          ? `video_${document.id}.${mimeType.split('/')[1]}`
+          : document.attributes[0]['fileName'];
+        break;
+
+      default:
+        await this.client.sendMessage(chat, {
+          message: this.text.mediaTypeNotSupported,
+        });
+        Logger.error(`Media type not supported: ${media.className}`);
+        break;
+    }
+
+    return fileName;
   }
 }
