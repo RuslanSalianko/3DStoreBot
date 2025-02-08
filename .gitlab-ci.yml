@@ -1,5 +1,7 @@
 stages:
   - build
+  - deploy
+
 build-docker:
   stage: build
   image: docker:stable
@@ -20,3 +22,15 @@ build-docker:
   script:
     - docker build -t ${URL_REGISTRY}/${PATH_PROJECT}:${CI_COMMIT_REF_NAME} --build-arg branch=${CI_COMMIT_REF_NAME} .
     - docker push ${URL_REGISTRY}/${PATH_PROJECT}:${CI_COMMIT_REF_NAME}
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying to server..."
+    - ssh ${DEPLOY_SERVER} "cd ${APP_PATH} && docker-compose pull"
+    - ssh ${DEPLOY_SERVER} "cd ${APP_PATH} && docker-compose up -d"
+    - echo "Deployment completed successfully."
+  tags:
+    - deploy
+  only:
+    - master
