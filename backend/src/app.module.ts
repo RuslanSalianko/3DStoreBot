@@ -11,7 +11,7 @@ import { AuthModule } from './auth/auth.module';
 import { ImageModule } from './image/image.module';
 import { join } from 'path';
 import { SettingModule } from './setting/setting.module';
-import configuration from 'config/configuration';
+import configuration from './config/configuration';
 
 @Module({
   imports: [

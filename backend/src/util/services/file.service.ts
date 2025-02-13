@@ -1,10 +1,10 @@
-import { createWriteStream, existsSync, mkdirSync } from 'fs';
+import { createWriteStream, existsSync } from 'fs';
+import { rm, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { randomUUID } from 'crypto';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DateService } from './date.service';
-import { Errors } from '../util.constants';
 
 @Injectable()
 export class FileService {
@@ -43,9 +43,19 @@ export class FileService {
     );
 
     if (!existsSync(dir)) {
-      mkdirSync(dir, { recursive: true });
+      mkdir(dir, { recursive: true });
     }
 
     return dir;
+  }
+
+  async delete(pathDir: string) {
+    try {
+      if (existsSync(pathDir)) {
+        return rm(pathDir, { recursive: true });
+      }
+    } catch (error) {
+      throw new Error('Not found dir' + error);
+    }
   }
 }

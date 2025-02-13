@@ -1,11 +1,13 @@
 import {
   Controller,
+  Delete,
   Get,
   HttpException,
   Param,
   Query,
   Res,
   UseGuards,
+  Logger,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { join } from 'path';
@@ -39,5 +41,15 @@ export class FileController {
         const e = error as HttpException;
         res.status(e.getStatus()).send(e.message);
       });
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':uuid')
+  async delete(@Param('uuid') uuid: string) {
+    try {
+      await this.fileService.delete(uuid);
+    } catch (error) {
+      console.log(error);
+    }
   }
 }

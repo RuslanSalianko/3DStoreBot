@@ -1,12 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
+import { FileService as FileUtilsService } from 'src/util/services/file.service';
 import { CreateFileDto } from './dto/create-file.dto';
 import { File } from '@prisma/client';
 import { FileQueryDto } from './dto/query.dto';
 
 @Injectable()
 export class FileService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly fileUtilsService: FileUtilsService,
+  ) {}
   queryRelation = {
     include: {
       images: true,
@@ -32,6 +36,34 @@ export class FileService {
         },
       },
     });
+  }
+
+  async delete(uuid: string) {
+    try {
+      const deleteFile = this.prisma.file.delete({
+        where: {
+          uuid,
+        },
+      });
+
+      const deleteImages = this.prisma.image.deleteMany({
+        where: {
+          file: {
+            uuid,
+          },
+        },
+      });
+
+      const [, deletedFile] = await this.prisma.$transaction([
+        deleteImages,
+        deleteFile,
+      ]);
+
+      const pathDir = deletedFile.path.split('/').slice(0, -1).join('/');
+      await this.fileUtilsService.delete(pathDir);
+    } catch (error) {
+      Logger.error(error);
+    }
   }
 
   async findAll(query: FileQueryDto) {
