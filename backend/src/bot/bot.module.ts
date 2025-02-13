@@ -19,12 +19,12 @@ import { SettingModule } from 'src/setting/setting.module';
     TelegrafModule.forRootAsync({
       imports: [],
       useFactory: (configService: ConfigService) => ({
-        token: configService.get<string>('TELEGRAM_BOT_TOKEN'),
+        token: configService.get<string>('telegram.bot.token'),
         middlewares: [session()],
         launchOptions: {
           webhook: {
-            domain: configService.get<string>('TELEGRAM_BOT_WEBHOOK_DOMAIN'),
-            hookPath: configService.get<string>('TELEGRAM_BOT_WEBHOOK_PATH'),
+            domain: configService.get<string>('telegram.bot.webhookDomain'),
+            hookPath: configService.get<string>('telegram.bot.webhookPath'),
           },
         },
       }),

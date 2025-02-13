@@ -7,7 +7,6 @@ import { FileService } from 'src/util/services/file.service';
 import { join } from 'node:path';
 import { TEXT, TText } from 'src/bot/constants/telegram.constants';
 import { _pin } from 'telegram/client/messages';
-import { TimeInterval } from 'rxjs/internal/operators/timeInterval';
 
 @Injectable()
 export class TelegramService implements OnModuleInit {
@@ -23,9 +22,9 @@ export class TelegramService implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    this.apiId = Number(this.configService.get<string>('TELEGRAM_APP_API_ID'));
-    this.apiHash = this.configService.get<string>('TELEGRAM_APP_API_HASH');
-    this.text = TEXT[this.configService.get<string>('LANG_APP') || 'en'];
+    this.apiId = Number(this.configService.get<string>('telegram.apiId'));
+    this.apiHash = this.configService.get<string>('telegram.apiHash');
+    this.text = TEXT[this.configService.get<string>('langApp')];
 
     const setting =
       (await this.settingService.findByKey('telegram-session'))?.value || '';

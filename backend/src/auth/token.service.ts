@@ -17,13 +17,13 @@ export class TokenService {
 
   generateToken(payload: UserDto): IToken {
     const accessToken = this.jwtService.sign(payload, {
-      secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
-      expiresIn: this.configService.get<string>('JWT_ACCESS_EXPIRATION'),
+      secret: this.configService.get<string>('jwt.accessTokenSecret'),
+      expiresIn: this.configService.get<string>('jwt.accessExpiresIn'),
     });
 
     const refreshToken = this.jwtService.sign(payload, {
-      secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
-      expiresIn: this.configService.get<string>('JWT_REFRESH_EXPIRATION'),
+      secret: this.configService.get<string>('jwt.refreshTokenSecret'),
+      expiresIn: this.configService.get<string>('jwt.refreshExpiresIn'),
     });
 
     return {

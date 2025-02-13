@@ -8,7 +8,7 @@ import { Errors } from '../util.constants';
 
 @Injectable()
 export class FileService {
-  language = this.configService.get('LANGUAGE');
+  language = this.configService.get('langApp');
   constructor(
     private readonly configService: ConfigService,
     private readonly dateService: DateService,
@@ -37,7 +37,7 @@ export class FileService {
   fileDir(): string {
     const uuid = randomUUID();
     const dir = join(
-      this.configService.get('UPLOAD_DIR'),
+      this.configService.get('uploadDir'),
       this.dateService.nowYYYDDMM(),
       uuid,
     );

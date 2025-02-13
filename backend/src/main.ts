@@ -16,12 +16,12 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
   app.use(
-    bot.webhookCallback(configService.get<string>('TELEGRAM_BOT_WEBHOOK_PATH')),
+    bot.webhookCallback(configService.get<string>('telegram.bot.webhookPath')),
   );
   app.use(cookieParser());
   const originUrl =
     process.env.NODE_ENV === 'production'
-      ? configService.get<string>('TELEGRAM_BOT_WEBHOOK_DOMAIN')
+      ? configService.get<string>('telegram.bot.webhookDomain')
       : 'http://localhost:5173';
 
   app.enableCors({

@@ -28,7 +28,7 @@ export class AuthController {
   ) {
     this.maxAgeJwtRefreshToken =
       this.dateService.parseExpirationToSeconds(
-        this.configService.get('JWT_REFRESH_EXPIRATION'),
+        this.configService.get('jwt.refreshExpiresIn'),
       ) * 1000;
   }
 

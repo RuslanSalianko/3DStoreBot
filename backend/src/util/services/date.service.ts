@@ -7,7 +7,7 @@ export class DateService {
   language: string;
 
   constructor(private readonly configService: ConfigService) {
-    this.language = this.configService.get('LANGUAGE');
+    this.language = this.configService.get('langApp');
   }
 
   nowYYYDDMM() {
