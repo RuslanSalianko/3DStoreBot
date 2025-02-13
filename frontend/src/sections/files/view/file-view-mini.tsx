@@ -9,11 +9,17 @@ import Paper from '@mui/material/Paper';
 import { HEAD_LABEL_MINI } from './config';
 import { FilesTableRowMini } from '../files-table-row-mini';
 import { IFile } from '@models/file.interface';
+import { FileService } from '@/api/services/file.service';
 
 type Props = {
   files: IFile[];
 };
+
 export function FilesViewMini({ files }: Props) {
+  const handleDeleteFile = (uuid: string) => {
+    FileService.delete(uuid);
+  };
+
   return (
     <TableContainer component={Paper}>
       <Table key="files">
@@ -32,7 +38,11 @@ export function FilesViewMini({ files }: Props) {
         </TableHead>
         <TableBody>
           {files.map((file) => (
-            <FilesTableRowMini key={file.id} {...file} />
+            <FilesTableRowMini
+              key={file.id}
+              {...file}
+              handleDeleteFile={handleDeleteFile}
+            />
           ))}
         </TableBody>
       </Table>

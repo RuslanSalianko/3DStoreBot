@@ -27,6 +27,7 @@ type Props = {
 
   selected?: boolean;
   handleClick?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleDeleteFile: (uuid: string) => void;
 };
 
 export default function FilesTableRow({
@@ -40,6 +41,7 @@ export default function FilesTableRow({
   images,
   selected,
   handleClick,
+  handleDeleteFile,
 }: Props) {
   const [open, setOpen] = useState<null | HTMLElement>(null);
 
@@ -110,6 +112,13 @@ export default function FilesTableRow({
             Info
           </MenuItem>
         </Link>
+        <MenuItem onClick={() => handleDeleteFile(uuid)}>
+          <Iconify
+            icon="delete"
+            sx={{ mr: 2, height: 24, width: 24, color: 'error.main' }}
+          />
+          Delete
+        </MenuItem>
       </Popover>
     </>
   );

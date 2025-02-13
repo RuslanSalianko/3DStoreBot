@@ -14,6 +14,7 @@ import FilesTableToolbar from '../files-table-toolbar';
 import FilesTableRow from '../files-table-row';
 
 import { IFile } from '@models/file.interface';
+import { FileService } from '@/api/services/file.service';
 
 type Props = {
   files: IFile[];
@@ -130,6 +131,10 @@ export default function FilesView({ files }: Props) {
     console.log('handleDeleteFiles');
   };
 
+  const handleDeleteFile = async (uuid: string) => {
+    FileService.delete(uuid);
+  };
+
   const notFound = !dataFiltered.length && !!filterName;
   return (
     <>
@@ -166,6 +171,7 @@ export default function FilesView({ files }: Props) {
                   images={row.images}
                   selected={selected.includes(row.id)}
                   handleClick={(event) => handleClick(event, row.id)}
+                  handleDeleteFile={(uuid: string) => handleDeleteFile(uuid)}
                 />
               ))}
 

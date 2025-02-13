@@ -14,6 +14,10 @@ import { FileService } from '@services/file.service';
 
 import { IFile } from '@models/file.interface';
 
+type Props = IFile & {
+  handleDeleteFile: (uuid: string) => void;
+};
+
 export function FilesTableRowMini({
   id,
   uuid,
@@ -22,7 +26,8 @@ export function FilesTableRowMini({
   size,
   format,
   category,
-}: IFile) {
+  handleDeleteFile,
+}: Props) {
   const [open, setOpen] = useState<null | HTMLElement>(null);
   const image = images.find((i) => i.isPrimary);
 
@@ -84,6 +89,13 @@ export function FilesTableRowMini({
             Info
           </MenuItem>
         </Link>
+        <MenuItem onClick={() => handleDeleteFile(uuid)}>
+          <Iconify
+            icon="delete"
+            sx={{ mr: 3, height: 24, width: 24, color: 'error.main' }}
+          />
+          Delete
+        </MenuItem>
       </Popover>
     </>
   );

@@ -33,6 +33,14 @@ export const FileService = {
       console.log(error);
     }
   },
+  delete: async (uuid: string): Promise<void> => {
+    try {
+      const urlFile = getFileUrl(uuid);
+      await $api.delete(urlFile);
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };
 
 function getFileUrl(uuid: string): string {
