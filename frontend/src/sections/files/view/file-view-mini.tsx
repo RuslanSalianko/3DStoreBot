@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import Table from '@mui/material/Table';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
@@ -16,8 +18,10 @@ type Props = {
 };
 
 export function FilesViewMini({ files }: Props) {
-  const handleDeleteFile = (uuid: string) => {
-    FileService.delete(uuid);
+  const [fileList, setFileList] = useState<IFile[]>(files);
+  const handleDeleteFile = async (uuid: string) => {
+    await FileService.delete(uuid);
+    setFileList(await FileService.findAll({ limit: '5' }));
   };
 
   return (
@@ -37,7 +41,7 @@ export function FilesViewMini({ files }: Props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {files.map((file) => (
+          {fileList.map((file) => (
             <FilesTableRowMini
               key={file.id}
               {...file}

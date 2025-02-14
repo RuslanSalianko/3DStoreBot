@@ -60,7 +60,7 @@ export default function FilesView({ files }: Props) {
 
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const [fileList] = useState<IFile[]>(files);
+  const [fileList, setFileList] = useState<IFile[]>(files);
 
   const handleSort = (event: React.ChangeEvent<HTMLElement>, id: any) => {
     event.preventDefault();
@@ -132,7 +132,9 @@ export default function FilesView({ files }: Props) {
   };
 
   const handleDeleteFile = async (uuid: string) => {
-    FileService.delete(uuid);
+    await FileService.delete(uuid);
+    const newFileList = fileList.filter((f) => f.uuid !== uuid);
+    setFileList(newFileList);
   };
 
   const notFound = !dataFiltered.length && !!filterName;
