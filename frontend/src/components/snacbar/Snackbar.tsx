@@ -16,6 +16,7 @@ const Snackbar = ({ message, severity, clearMessage }: Props) => {
     event: React.SyntheticEvent | Event,
     reason?: SnackbarCloseReason,
   ) => {
+    event.preventDefault();
     if (reason === 'clickaway') {
       return;
     }
