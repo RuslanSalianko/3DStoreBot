@@ -17,6 +17,7 @@ export type AuthStore = {
   logout: () => Promise<void>;
   checkAuth: () => Promise<IAuthResponse | undefined>;
   refreshAuthUser: (id: number | undefined) => Promise<void>;
+  clearErrorMessage: () => void;
 };
 
 const defaultState = {
@@ -45,7 +46,11 @@ export const useAuth = create<AuthStore>((set) => ({
 
       set({ user: response.data.user, isAuthenticated: true });
     } catch (error) {
-      set({ ...defaultState, errorMessage: 'Invalid login or password' });
+      set({
+        ...defaultState,
+        isGetPassword: true,
+        errorMessage: 'Invalid login or password',
+      });
       console.log(error);
     }
   },
@@ -85,4 +90,5 @@ export const useAuth = create<AuthStore>((set) => ({
       console.log(error);
     }
   },
+  clearErrorMessage: () => set({ errorMessage: '' }),
 }));

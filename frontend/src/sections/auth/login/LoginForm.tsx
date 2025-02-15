@@ -8,7 +8,8 @@ import Button from '@mui/material/Button';
 import { useAuth } from '@store/auth';
 
 export default function LoginForm() {
-  const { getPassword, login, isGetPassword } = useAuth();
+  const { getPassword, login, isGetPassword, errorMessage, clearErrorMessage } =
+    useAuth();
 
   const form = useForm({
     defaultValues: {
@@ -24,6 +25,7 @@ export default function LoginForm() {
     },
     validatorAdapter: zodValidator(),
   });
+
   return (
     <>
       <Stack spacing={4} direction="column" mt={4}>
@@ -47,12 +49,22 @@ export default function LoginForm() {
             }}
             children={(field) => (
               <TextField
-                error={field.state.meta.errors.length ? true : false}
+                error={
+                  field.state.meta.errors.length ||
+                  (errorMessage && !isGetPassword)
+                    ? true
+                    : false
+                }
                 label="Email"
                 value={field.state.value}
                 onBlur={field.handleBlur}
-                onChange={(e) => field.setValue(e.target.value)}
-                helperText={field.state.meta.errors[0]}
+                onChange={(e) => {
+                  field.setValue(e.target.value);
+                  clearErrorMessage();
+                }}
+                helperText={
+                  field.state.meta.errors[0] || (!isGetPassword && errorMessage)
+                }
                 sx={{ label: { color: 'text.primary' } }}
               />
             )}
@@ -73,9 +85,14 @@ export default function LoginForm() {
                 name="password"
                 children={(field) => (
                   <TextField
+                    error={errorMessage ? true : false}
                     label={field.name}
                     value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
+                    onChange={(e) => {
+                      field.handleChange(e.target.value);
+                      clearErrorMessage();
+                    }}
+                    helperText={errorMessage}
                     sx={{ label: { color: 'text.primary' } }}
                   />
                 )}
