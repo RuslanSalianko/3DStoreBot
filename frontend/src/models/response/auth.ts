@@ -8,6 +8,6 @@ export interface IAuthResponse {
 
 export interface IErrorResponse {
   error: string;
-  message: string[];
+  message: string;
   statusCode: number;
 }

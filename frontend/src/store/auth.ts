@@ -1,10 +1,11 @@
+import { AxiosError } from 'axios';
 import { create } from 'zustand';
 
 import { UserService } from '@services/user.service';
 import { AuthService } from '@services/auth.service';
 
 import { IUser } from '@models/user.interface';
-import { IAuthResponse } from '@models/response/auth';
+import { IAuthResponse, IErrorResponse } from '@models/response/auth';
 
 export type AuthStore = {
   user: IUser | null;
@@ -33,8 +34,8 @@ export const useAuth = create<AuthStore>((set) => ({
 
       set({ isGetPassword: true });
     } catch (error) {
-      set({ ...defaultState, errorMessage: '' });
-      console.log(error);
+      const e = error as AxiosError<IErrorResponse>;
+      set({ ...defaultState, errorMessage: e.response?.data.message });
     }
   },
   login: async (email: string, password: string) => {
