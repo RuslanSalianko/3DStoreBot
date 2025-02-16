@@ -1,6 +1,13 @@
+import { join } from 'path';
 import { Module } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import {
+  AcceptLanguageResolver,
+  HeaderResolver,
+  I18nModule,
+  QueryResolver,
+} from 'nestjs-i18n';
 import { DatabaseModule } from './database/database.module';
 import { BotModule } from './bot/bot.module';
 import { UserModule } from './user/user.module';
@@ -9,7 +16,6 @@ import { CategoryModule } from './category/category.module';
 import { UtilModule } from './util/util.module';
 import { AuthModule } from './auth/auth.module';
 import { ImageModule } from './image/image.module';
-import { join } from 'path';
 import { SettingModule } from './setting/setting.module';
 import configuration from './config/configuration';
 
@@ -22,6 +28,20 @@ import configuration from './config/configuration';
     ConfigModule.forRoot({
       isGlobal: true,
       load: [configuration],
+    }),
+    I18nModule.forRootAsync({
+      useFactory: (configService: ConfigService) => ({
+        fallbackLanguage: configService.get<string>('langApp'),
+        loaderOptions: {
+          path: join(__dirname, '/i18n/'),
+          watch: true,
+        },
+      }),
+      resolvers: [
+        new HeaderResolver(['x-custom-lang']),
+        AcceptLanguageResolver,
+      ],
+      inject: [ConfigService],
     }),
     DatabaseModule,
     BotModule,
