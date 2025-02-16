@@ -1,0 +1,7 @@
+{
+  "bot": {
+    "downloadingFile": "Загрузка файла",
+    "mediaTypeNotSupported": "Тип загружаемого файла не поддерживается",
+    "error": {}
+  }
+}

@@ -1,30 +1,28 @@
 import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { I18nContext, I18nService } from 'nestjs-i18n';
 import { Api, TelegramClient } from 'telegram';
 import { StringSession } from 'telegram/sessions';
 import { SettingService } from 'src/setting/setting.service';
 import { FileService } from 'src/util/services/file.service';
 import { join } from 'node:path';
-import { TEXT, TText } from 'src/bot/constants/telegram.constants';
-import { _pin } from 'telegram/client/messages';
 
 @Injectable()
 export class TelegramService implements OnModuleInit {
   private client: TelegramClient;
   private apiId: number;
   private apiHash: string;
-  private text: TText;
 
   constructor(
     private readonly configService: ConfigService,
     private readonly settingService: SettingService,
     private readonly fileService: FileService,
+    private readonly i18n: I18nService,
   ) {}
 
   async onModuleInit() {
     this.apiId = Number(this.configService.get<string>('telegram.apiId'));
     this.apiHash = this.configService.get<string>('telegram.apiHash');
-    this.text = TEXT[this.configService.get<string>('langApp')];
 
     const setting =
       (await this.settingService.findByKey('telegram-session'))?.value || '';
@@ -133,7 +131,7 @@ export class TelegramService implements OnModuleInit {
   ): Promise<string | Buffer | undefined> {
     const chat = await this.client.getEntity(message.chatId);
     const messageProgress = await this.client.sendMessage(chat, {
-      message: this.text.downloadingFile,
+      message: this.i18n.t('bot.downloadingFile'),
     });
 
     let index = 0;
@@ -146,7 +144,7 @@ export class TelegramService implements OnModuleInit {
         if (index % 50 === 0) {
           await this.client.editMessage(chat, {
             message: messageProgress.id,
-            text: `${this.text.downloadingFile}: ${progress}%`,
+            text: `${this.i18n.t('bot.downloadingFile')}: ${progress}%`,
           });
         }
 
@@ -185,7 +183,7 @@ export class TelegramService implements OnModuleInit {
 
       default:
         await this.client.sendMessage(chat, {
-          message: this.text.mediaTypeNotSupported,
+          message: this.i18n.t('bot.mediaTypeNotSupported'),
         });
         Logger.error(`Media type not supported: ${media.className}`);
         break;
