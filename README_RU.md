@@ -40,10 +40,10 @@
 
    UPLOAD_DIR='./public/files'
 
-   JWT_ACCESS_SECRET=jwt-secret-key
-   JWT_REFRESH_SECRET=jwt-refresh-secret-key
-   JWT_ACCESS_EXPIRATION=1d
-   JWT_REFRESH_EXPIRATION=30d
+   JWT_ACCESS_TOKEN_SECRET='jwt-secret-key'
+   JWT_REFRESH_TOKEN_SECRET='jwt-refresh-secret-key'
+   JWT_ACCESS_EXPIRES_IN='1d'
+   JWT_REFRESH_EXPIRES_IN='30d'
    ```
 
    TELEGRAM_BOT_WEBHOOK_DOMAIN, JWT_ACCESS_SECRET, JWT_REFRESH_SECRET можно сгерировать с помощью команды

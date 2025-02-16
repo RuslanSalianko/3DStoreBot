@@ -41,6 +41,7 @@ This project is a solution for managing and storing 3D printing files that can b
 
    UPLOAD_DIR='./public/files'
 
+
    JWT_ACCESS_SECRET=jwt-secret-key
    JWT_REFRESH_SECRET=jwt-refresh-secret-key
    JWT_ACCESS_EXPIRATION=1d
