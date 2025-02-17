@@ -6,7 +6,6 @@ import {
   AcceptLanguageResolver,
   HeaderResolver,
   I18nModule,
-  QueryResolver,
 } from 'nestjs-i18n';
 import { DatabaseModule } from './database/database.module';
 import { BotModule } from './bot/bot.module';
@@ -21,14 +20,6 @@ import configuration from './config/configuration';
 
 @Module({
   imports: [
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, 'static'),
-      exclude: ['/api*'],
-    }),
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [configuration],
-    }),
     I18nModule.forRootAsync({
       useFactory: (configService: ConfigService) => ({
         fallbackLanguage: configService.get<string>('langApp'),
@@ -37,11 +28,16 @@ import configuration from './config/configuration';
           watch: true,
         },
       }),
-      resolvers: [
-        new HeaderResolver(['x-custom-lang']),
-        AcceptLanguageResolver,
-      ],
+      resolvers: [new HeaderResolver(['x-lang']), AcceptLanguageResolver],
       inject: [ConfigService],
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, 'static'),
+      exclude: ['/api*'],
+    }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [configuration],
     }),
     DatabaseModule,
     BotModule,

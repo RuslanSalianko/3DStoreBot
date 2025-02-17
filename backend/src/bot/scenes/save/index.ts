@@ -1,10 +1,8 @@
 import { Ctx, Message, On, Scene, SceneEnter } from 'nestjs-telegraf';
-import { ConfigService } from '@nestjs/config';
+import { I18nService } from 'nestjs-i18n';
 import { FileService } from 'src/file/file.service';
 import { UserService } from 'src/user/user.service';
-import { Language } from 'src/bot/language';
 import { SCENE_ID } from '../../constants';
-import { TEXT } from './text.constants';
 import { BotContext } from 'src/bot/interface/bot-context.type';
 import { Message as MessageTelegram } from 'telegraf/typings/core/types/typegram';
 import { IMediaGroup } from 'src/bot/interface/media-group.interface';
@@ -12,18 +10,17 @@ import { CreateFileDto } from 'src/file/dto/create-file.dto';
 import { TelegramService } from 'src/bot/telegram.service';
 
 @Scene(SCENE_ID.save)
-export class SaveScene extends Language {
+export class SaveScene {
   constructor(
     private readonly fileService: FileService,
     private readonly userService: UserService,
     private readonly telegramService: TelegramService,
-  ) {
-    super(new ConfigService());
-  }
+    private readonly i18n: I18nService,
+  ) {}
 
   @SceneEnter()
   async onSceneEnter(@Ctx() ctx: BotContext) {
-    await ctx.reply(TEXT[this.language].onSceneEnter);
+    await ctx.reply(this.i18n.t('scenes.save.enter'));
   }
 
   @On('document')
@@ -55,7 +52,7 @@ export class SaveScene extends Language {
       const images = files.slice(0, files.length - 1);
 
       this.fileService.create(fileDto, user.id, images).then(() => {
-        ctx.reply(TEXT[this.language].complete);
+        ctx.reply(this.i18n.t('scenes.save.success'));
       });
     });
 

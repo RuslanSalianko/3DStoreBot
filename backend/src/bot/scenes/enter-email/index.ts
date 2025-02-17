@@ -8,22 +8,21 @@ import {
   SceneLeave,
   Sender,
 } from 'nestjs-telegraf';
-import { ConfigService } from '@nestjs/config';
+import { I18nService } from 'nestjs-i18n';
 import { UserService } from 'src/user/user.service';
 import { SCENE_ID } from 'src/bot/constants';
-import { TEXT } from './text.constants';
-import { Language } from 'src/bot/language';
 import { BotContext } from 'src/bot/interface/bot-context.type';
 
 @Scene(SCENE_ID.enterEmail)
-export class EnterEmailScene extends Language {
-  constructor(private readonly userService: UserService) {
-    super(new ConfigService());
-  }
+export class EnterEmailScene {
+  constructor(
+    private readonly userService: UserService,
+    private readonly i18n: I18nService,
+  ) {}
 
   @SceneEnter()
   onSceneEnter(@Ctx() ctx: BotContext) {
-    ctx.reply(TEXT[this.language].enter);
+    ctx.reply(this.i18n.t('scenes.enterEmail.enter'));
   }
 
   @Hears(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
@@ -38,12 +37,12 @@ export class EnterEmailScene extends Language {
 
   @On('text')
   async text(@Ctx() ctx: BotContext) {
-    await ctx.reply(TEXT[this.language].noEmail);
+    await ctx.reply(this.i18n.t('scenes.enterEmail.noEmail'));
   }
 
   @SceneLeave()
   async onSceneLeave(@Ctx() ctx: BotContext) {
-    await ctx.reply(TEXT[this.language].leave, {
+    await ctx.reply(this.i18n.t('scenes.enterEmail.leave'), {
       reply_markup: { remove_keyboard: true },
     });
   }

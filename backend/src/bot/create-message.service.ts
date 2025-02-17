@@ -1,39 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { Language } from './language';
-import { TEXT } from './constants';
+import { I18nService } from 'nestjs-i18n';
 import { User } from '@prisma/client';
 
 @Injectable()
-export class CreateMessageService extends Language {
-  constructor() {
-    super(new ConfigService());
-  }
+export class CreateMessageService {
+  constructor(private readonly i18n: I18nService) {}
 
   emojiYesOrNo(b: boolean): string {
     return b ? '✅' : '❌';
   }
 
   buildUserResponse(user: User): string {
-    switch (this.language) {
-      case 'en':
-        return (
-          `├ ID: ${user.telegramId}\n` +
-          `├ Name: ${user.firstName}\n` +
-          `├ UserName: ${user.username}\n` +
-          `├ Activated: ${this.emojiYesOrNo(user.isActive)}\n`
-        );
-      case 'ru':
-        return (
-          `├ 🆔: ${user.telegramId}\n` +
-          `├ Имя: ${user.firstName}\n` +
-          `├ UserName: ${user.username}\n` +
-          `├ Активирован: ${this.emojiYesOrNo(user.isActive)}\n`
-        );
-    }
+    return (
+      `├ 🆔: ${user.telegramId}\n` +
+      `├ ${this.i18n.t('bot.name')}: ${user.firstName}\n` +
+      `├ UserName: ${user.username}\n` +
+      `├ ${this.i18n.t('bot.activated')}: ${this.emojiYesOrNo(user.isActive)}\n`
+    );
   }
 
   sendPassword(password: string): string {
-    return `🔑 \`${password}\`\n${TEXT[this.language].sendPassword}`;
+    return `🔑 \`${password}\`\n${this.i18n.t('bot.sendPassword')}`;
   }
 }

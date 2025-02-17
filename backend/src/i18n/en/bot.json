@@ -1,0 +1,34 @@
+{
+  "welcome": "Welcome",
+  "enterEmail": "Set email",
+  "sendPassword": "Your password will be real 20 min",
+  "downloadingFile": "Downloading file",
+  "mediaTypeNotSupported": "Media type not supported",
+  "name": "Name",
+  "activated": "Activated",
+  "error": {},
+  "scenes": {
+    "initization": {
+      "leave": "Setup is complete. You have been appointed a bot administrator"
+    },
+    "login": {
+      "leave": "After confirming the administrator, you will have access 🤩",
+      "ban": "⛔️😡 You have fallen into the ban 😡⛔️\n For exclusion from the ban, contact the administrator.",
+      "newUser": "New user:"
+    },
+    "enterEmail": {
+      "enter": "Enter your email",
+      "noEmail": "You have not entered an email",
+      "leave": "Email set, now you can log in with it"
+    },
+    "save": {
+      "onSceneEnter": "Please send the zip file",
+      "success": "Upload complete. Model saved"
+    }
+  },
+  "menu": {
+    "keyboard": {
+      "enterEmail": "Enter email"
+    }
+  }
+}
