@@ -16,7 +16,6 @@ import { ICategory } from '@/models/category.interface';
 import { IImage } from '@/models/image.interface';
 
 type Props = {
-  id: number;
   uuid: string;
   name: string;
   description: string;
@@ -31,7 +30,6 @@ type Props = {
 };
 
 export default function FilesTableRow({
-  id,
   uuid,
   name,
   description,
@@ -106,7 +104,7 @@ export default function FilesTableRow({
         anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <Link to={`/dashboard/files/${id}`}>
+        <Link to={`/dashboard/files/${uuid}`}>
           <MenuItem onClick={handleCloseMenu}>
             <Iconify icon="info" sx={{ mr: 2, height: 24, width: 24 }} />
             Info

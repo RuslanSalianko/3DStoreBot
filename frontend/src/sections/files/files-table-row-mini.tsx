@@ -19,7 +19,6 @@ type Props = IFile & {
 };
 
 export function FilesTableRowMini({
-  id,
   uuid,
   name,
   images,
@@ -83,7 +82,7 @@ export function FilesTableRowMini({
           },
         }}
       >
-        <Link to={`/dashboard/file/${id}`}>
+        <Link to={`/dashboard/file/${uuid}`}>
           <MenuItem>
             <Iconify icon="info" sx={{ mr: 3, height: 24, width: 24 }} />
             Info
