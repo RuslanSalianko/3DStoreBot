@@ -29,6 +29,12 @@ export class FileController {
 
   @UseGuards(JwtAuthGuard)
   @Get(':uuid')
+  async file(@Param('uuid') uuid: string) {
+    return this.fileService.findByUuid(uuid);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':uuid/download')
   getFile(@Param('uuid') uuid: string, @Res() res: Response) {
     const file = this.fileService.findByUuid(uuid);
 
