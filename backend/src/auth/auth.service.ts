@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectBot } from 'nestjs-telegraf';
 import { Telegraf } from 'telegraf';
+import { I18nService } from 'nestjs-i18n';
 import { PrismaService } from 'src/database/prisma.service';
 import { UserService } from 'src/user/user.service';
 import { CreateMessageService } from 'src/bot/create-message.service';
@@ -18,6 +19,7 @@ export class AuthService {
     private readonly bot: Telegraf<BotContext>,
     private readonly createMessage: CreateMessageService,
     private readonly tokenService: TokenService,
+    private readonly i18n: I18nService,
   ) {}
 
   async generatePassword(email: string): Promise<Password> {
@@ -60,11 +62,11 @@ export class AuthService {
     });
 
     if (userPassword.password !== password) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException(this.i18n.t('exception.invalidPassword'));
     }
 
     if (!user.isActive) {
-      throw new UnauthorizedException('User is not active');
+      throw new UnauthorizedException(this.i18n.t('exception.useNotActivate'));
     }
 
     return user;

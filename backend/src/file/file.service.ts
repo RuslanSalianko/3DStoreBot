@@ -1,4 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { I18nService } from 'nestjs-i18n';
 import { PrismaService } from 'src/database/prisma.service';
 import { FileService as FileUtilsService } from 'src/util/services/file.service';
 import { CreateFileDto } from './dto/create-file.dto';
@@ -10,6 +11,7 @@ export class FileService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly fileUtilsService: FileUtilsService,
+    private readonly i18n: I18nService,
   ) {}
   queryRelation = {
     include: {
@@ -107,7 +109,7 @@ export class FileService {
     });
 
     if (!file) {
-      throw new NotFoundException('File not found');
+      throw new NotFoundException(this.i18n.t('exceprion.fileNotFound'));
     }
 
     return file;
@@ -121,7 +123,7 @@ export class FileService {
     });
 
     if (!file) {
-      throw new NotFoundException('File not found');
+      throw new NotFoundException(this.i18n.t('exceprion.fileNotFound'));
     }
 
     return file;

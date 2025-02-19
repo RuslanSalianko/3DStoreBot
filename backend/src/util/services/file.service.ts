@@ -2,8 +2,9 @@ import { createWriteStream, existsSync } from 'fs';
 import { rm, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { randomUUID } from 'crypto';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { I18nService } from 'nestjs-i18n';
 import { DateService } from './date.service';
 
 @Injectable()
@@ -12,6 +13,7 @@ export class FileService {
   constructor(
     private readonly configService: ConfigService,
     private readonly dateService: DateService,
+    private readonly i18n: I18nService,
   ) {}
 
   async saveFileTelegramByBuffer(
@@ -28,7 +30,7 @@ export class FileService {
     });
 
     writeStream.on('error', () => {
-      Logger.error('Error download file:');
+      throw new Error(this.i18n.t('exception.downloadFile'));
     });
 
     return filePath;
@@ -55,7 +57,7 @@ export class FileService {
         return rm(pathDir, { recursive: true });
       }
     } catch (error) {
-      throw new Error('Not found dir' + error);
+      throw new Error(this.i18n.t('exception.dirNotFound') + error);
     }
   }
 }

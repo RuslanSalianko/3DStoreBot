@@ -1,14 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { TEXT_DATE } from '../text.constants';
+import { I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class DateService {
-  language: string;
-
-  constructor(private readonly configService: ConfigService) {
-    this.language = this.configService.get('langApp');
-  }
+  constructor(private readonly i18n: I18nService) {}
 
   nowYYYDDMM() {
     const date = new Date();
@@ -23,7 +18,7 @@ export class DateService {
     const match = expiration.match(regex);
 
     if (!match) {
-      throw new Error(TEXT_DATE[this.language].error.formatSMHDWY);
+      throw new Error(this.i18n.t('exception.formatSMHDWY'));
     }
 
     const value = parseInt(match[1], 10); // Number

@@ -1,0 +1,10 @@
+{
+  "userNotActivate": "User is not active",
+  "invalidPassword": "Invalid password",
+  "imageNotFound": "Image not found",
+  "userNotFound": "User not Found",
+  "dirNotFound": "Not found dir",
+  "userAlreadyExists": "User already exists",
+  "formatSMHDWY": "Invalid time format. Use a number with a suffix s, m, h, d, w or y.",
+  "downloadFile": "File download error"
+}

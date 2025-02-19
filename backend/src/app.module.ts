@@ -17,20 +17,29 @@ import { AuthModule } from './auth/auth.module';
 import { ImageModule } from './image/image.module';
 import { SettingModule } from './setting/setting.module';
 import configuration from './config/configuration';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
-    I18nModule.forRootAsync({
-      useFactory: (configService: ConfigService) => ({
-        fallbackLanguage: configService.get<string>('langApp'),
-        loaderOptions: {
-          path: join(__dirname, '/i18n/'),
-          watch: true,
-        },
-      }),
-      resolvers: [new HeaderResolver(['x-lang']), AcceptLanguageResolver],
-      inject: [ConfigService],
+    I18nModule.forRoot({
+      fallbackLanguage: 'en',
+      loaderOptions: {
+        path: join(__dirname, '/i18n/'),
+        watch: true,
+      },
+      resolvers: [AcceptLanguageResolver],
     }),
+    //I18nModule.forRootAsync({
+    //  useFactory: (configService: ConfigService) => ({
+    //    fallbackLanguage: configService.get<string>('langApp'),
+    //    loaderOptions: {
+    //      path: join(__dirname, '/i18n/'),
+    //      watch: true,
+    //    },
+    //  }),
+    //  resolvers: [new HeaderResolver(['x-lang']), AcceptLanguageResolver],
+    //  inject: [ConfigService],
+    //}),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, 'static'),
       exclude: ['/api*'],
@@ -49,5 +58,6 @@ import configuration from './config/configuration';
     ImageModule,
     SettingModule,
   ],
+  controllers: [AppController],
 })
 export class AppModule {}

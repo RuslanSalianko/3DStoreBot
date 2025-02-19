@@ -4,12 +4,16 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
+import { I18nService } from 'nestjs-i18n';
 import { PrismaService } from 'src/database/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly i18n: I18nService,
+  ) {}
 
   async create(userDto: CreateUserDto): Promise<User> {
     const user = await this.prisma.user.findUnique({
@@ -19,7 +23,7 @@ export class UserService {
     });
 
     if (user) {
-      throw new ConflictException('User already exists');
+      throw new ConflictException(this.i18n.t('exception.userAlreadyExists'));
     }
 
     return this.prisma.user.create({
@@ -76,7 +80,7 @@ export class UserService {
     });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException(this.i18n.t('exception.userNotFound'));
     }
 
     return user;
