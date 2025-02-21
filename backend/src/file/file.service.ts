@@ -3,7 +3,6 @@ import { I18nService } from 'nestjs-i18n';
 import { PrismaService } from 'src/database/prisma.service';
 import { FileService as FileUtilsService } from 'src/util/services/file.service';
 import { CreateFileDto } from './dto/create-file.dto';
-import { File } from '@prisma/client';
 import { FileQueryDto } from './dto/query.dto';
 
 @Injectable()
@@ -115,11 +114,12 @@ export class FileService {
     return file;
   }
 
-  async findByUuid(uuid: string): Promise<File> {
+  async findByUuid(uuid: string) {
     const file = await this.prisma.file.findUnique({
       where: {
         uuid,
       },
+      ...this.queryRelation,
     });
 
     if (!file) {

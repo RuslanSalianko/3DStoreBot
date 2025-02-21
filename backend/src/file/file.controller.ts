@@ -30,7 +30,9 @@ export class FileController {
   @UseGuards(JwtAuthGuard)
   @Get(':uuid')
   async file(@Param('uuid') uuid: string) {
-    return this.fileService.findByUuid(uuid);
+    const file = await this.fileService.findByUuid(uuid);
+
+    return new FileDto(file);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -55,7 +57,7 @@ export class FileController {
     try {
       await this.fileService.delete(uuid);
     } catch (error) {
-      console.log(error);
+      Logger.log(error);
     }
   }
 }
