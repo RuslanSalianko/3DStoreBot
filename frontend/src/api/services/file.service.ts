@@ -13,13 +13,15 @@ export const FileService = {
     const url = buildUrlWithParams('/file', query);
     return (await $api.get<IFile[]>(url)).data;
   },
-  findByUUID: async (uuid: string) => {
+  findByUUID: async (uuid: string): Promise<IFile> => {
     try {
       const url = getFileUrl(uuid);
       const response = await $api.get(url);
 
       return response.data;
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   },
   downloadFile: async (uuid: string, format: string): Promise<void> => {
     try {
