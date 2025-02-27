@@ -6,6 +6,7 @@ import { StringSession } from 'telegram/sessions';
 import { SettingService } from 'src/setting/setting.service';
 import { FileService } from 'src/util/services/file.service';
 import { join } from 'node:path';
+import { I18nTranslations } from 'src/language/type/i18n.generated';
 
 @Injectable()
 export class TelegramService implements OnModuleInit {
@@ -17,7 +18,7 @@ export class TelegramService implements OnModuleInit {
     private readonly configService: ConfigService,
     private readonly settingService: SettingService,
     private readonly fileService: FileService,
-    private readonly i18n: I18nService,
+    private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 
   async onModuleInit() {

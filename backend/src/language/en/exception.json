@@ -4,7 +4,9 @@
   "imageNotFound": "Image not found",
   "userNotFound": "User not Found",
   "dirNotFound": "Not found dir",
+  "fileNotFound": "File not found",
   "userAlreadyExists": "User already exists",
+  "useNotActivate": "User is not active",
   "formatSMHDWY": "Invalid time format. Use a number with a suffix s, m, h, d, w or y.",
   "downloadFile": "File download error"
 }

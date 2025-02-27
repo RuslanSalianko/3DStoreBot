@@ -7,12 +7,13 @@ import { User } from '@prisma/client';
 import { I18nService } from 'nestjs-i18n';
 import { PrismaService } from 'src/database/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { I18nTranslations } from 'src/language/type/i18n.generated';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly i18n: I18nService,
+    private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 
   async create(userDto: CreateUserDto): Promise<User> {

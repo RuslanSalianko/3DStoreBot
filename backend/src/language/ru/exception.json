@@ -4,7 +4,9 @@
   "imageNotFound": "Изображение не найдено",
   "userNotFound": "Пользователь не найден",
   "dirNotFound": "Директория не существует",
+  "fileNotFound": "Файл не найден",
   "userAlreadyExists": "Пользователь уже существует",
+  "useNotActivate": "Пользователь не активирован, обратитесь к администратору",
   "formatSMHDWY": "Invalid time format. Use a number with a suffix s, m, h, d, w or y.",
   "downloadFile": "Ошибка при скачивании файла"
 }

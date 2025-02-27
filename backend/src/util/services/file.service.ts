@@ -6,6 +6,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { I18nService } from 'nestjs-i18n';
 import { DateService } from './date.service';
+import { I18nTranslations } from 'src/language/type/i18n.generated';
 
 @Injectable()
 export class FileService {
@@ -13,7 +14,7 @@ export class FileService {
   constructor(
     private readonly configService: ConfigService,
     private readonly dateService: DateService,
-    private readonly i18n: I18nService,
+    private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 
   async saveFileTelegramByBuffer(

@@ -9,6 +9,7 @@ import { TokenService } from './token.service';
 import { BotContext } from 'src/bot/interface/bot-context.type';
 import { Password, User } from '@prisma/client';
 import { UserDto } from 'src/user/dto/user.dto';
+import { I18nTranslations } from 'src/language/type/i18n.generated';
 
 @Injectable()
 export class AuthService {
@@ -19,7 +20,7 @@ export class AuthService {
     private readonly bot: Telegraf<BotContext>,
     private readonly createMessage: CreateMessageService,
     private readonly tokenService: TokenService,
-    private readonly i18n: I18nService,
+    private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 
   async generatePassword(email: string): Promise<Password> {

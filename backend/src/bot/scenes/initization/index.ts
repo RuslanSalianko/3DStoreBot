@@ -6,13 +6,14 @@ import { SCENE_ID } from 'src/bot/constants';
 import { User } from 'telegraf/typings/core/types/typegram';
 import { BotContext } from 'src/bot/interface/bot-context.type';
 import { KeyboardMenu } from 'src/bot/menu/keyboard';
+import { I18nTranslations } from 'src/language/type/i18n.generated';
 
 @Scene(SCENE_ID.initialization)
 export class InitializationScene {
   constructor(
     private readonly userService: UserService,
     private readonly botService: BotService,
-    private readonly i18n: I18nService,
+    private readonly i18n: I18nService<I18nTranslations>,
     private readonly menu: KeyboardMenu,
   ) {}
 
@@ -32,6 +33,9 @@ export class InitializationScene {
 
   @SceneLeave()
   onSceneLeave(@Ctx() ctx: BotContext) {
-    ctx.reply(this.i18n.t('scenes.initization.leave'), this.menu.enterEmail());
+    ctx.reply(
+      this.i18n.t('bot.scenes.initization.leave'),
+      this.menu.enterEmail(),
+    );
   }
 }

@@ -8,6 +8,7 @@ import { Message as MessageTelegram } from 'telegraf/typings/core/types/typegram
 import { IMediaGroup } from 'src/bot/interface/media-group.interface';
 import { CreateFileDto } from 'src/file/dto/create-file.dto';
 import { TelegramService } from 'src/bot/telegram.service';
+import { I18nTranslations } from 'src/language/type/i18n.generated';
 
 @Scene(SCENE_ID.save)
 export class SaveScene {
@@ -15,12 +16,12 @@ export class SaveScene {
     private readonly fileService: FileService,
     private readonly userService: UserService,
     private readonly telegramService: TelegramService,
-    private readonly i18n: I18nService,
+    private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 
   @SceneEnter()
   async onSceneEnter(@Ctx() ctx: BotContext) {
-    await ctx.reply(this.i18n.t('scenes.save.enter'));
+    await ctx.reply(this.i18n.t('bot.scenes.save.onSceneEnter'));
   }
 
   @On('document')
@@ -52,7 +53,7 @@ export class SaveScene {
       const images = files.slice(0, files.length - 1);
 
       this.fileService.create(fileDto, user.id, images).then(() => {
-        ctx.reply(this.i18n.t('scenes.save.success'));
+        ctx.reply(this.i18n.t('bot.scenes.save.success'));
       });
     });
 

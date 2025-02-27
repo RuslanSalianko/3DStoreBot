@@ -45,7 +45,9 @@ export type I18nTranslations = {
         "imageNotFound": string;
         "userNotFound": string;
         "dirNotFound": string;
+        "fileNotFound": string;
         "userAlreadyExists": string;
+        "useNotActivate": string;
         "formatSMHDWY": string;
         "downloadFile": string;
     };

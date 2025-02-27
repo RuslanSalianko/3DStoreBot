@@ -15,6 +15,7 @@ import { BotService } from './bot.service';
 import { Message as MessageTelegram } from 'telegraf/typings/core/types/typegram';
 import { IMediaGroup } from './interface/media-group.interface';
 import { KeyboardMenu } from './menu/keyboard';
+import { I18nTranslations } from 'src/language/type/i18n.generated';
 
 @Update()
 export class BotUpdate {
@@ -24,7 +25,7 @@ export class BotUpdate {
     private readonly userService: UserService,
     private readonly botService: BotService,
     private readonly menu: KeyboardMenu,
-    private readonly i18n: I18nService,
+    private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 
   @Start()

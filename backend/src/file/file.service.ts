@@ -4,13 +4,14 @@ import { PrismaService } from 'src/database/prisma.service';
 import { FileService as FileUtilsService } from 'src/util/services/file.service';
 import { CreateFileDto } from './dto/create-file.dto';
 import { FileQueryDto } from './dto/query.dto';
+import { I18nTranslations } from 'src/language/type/i18n.generated';
 
 @Injectable()
 export class FileService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly fileUtilsService: FileUtilsService,
-    private readonly i18n: I18nService,
+    private readonly i18n: I18nService<I18nTranslations>,
   ) {}
   queryRelation = {
     include: {
@@ -108,7 +109,7 @@ export class FileService {
     });
 
     if (!file) {
-      throw new NotFoundException(this.i18n.t('exceprion.fileNotFound'));
+      throw new NotFoundException(this.i18n.t('exception.fileNotFound'));
     }
 
     return file;
@@ -123,7 +124,7 @@ export class FileService {
     });
 
     if (!file) {
-      throw new NotFoundException(this.i18n.t('exceprion.fileNotFound'));
+      throw new NotFoundException(this.i18n.t('exception.fileNotFound'));
     }
 
     return file;
