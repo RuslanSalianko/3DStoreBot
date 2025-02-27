@@ -85,7 +85,8 @@ To save files from Telegram channels, use the following algorithm:
 
 - [x] Handling archives larger than 20 MB
 - [ ] Processing of the first post with gif, video
-- [ ] Implementing multilingualism using i18next
+- [x] Implementing multilingualism(backend) using i18next
+- [ ] Implementing multilingualism(frontend) using i18next
 - [ ] Saving files if a single post contains both photo and archive
 - [ ] Saving files from sites like printables.com, thingiverse.com, thangs.com, etc.
 
