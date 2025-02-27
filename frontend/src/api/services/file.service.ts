@@ -13,7 +13,7 @@ export const FileService = {
     const url = buildUrlWithParams('/file', query);
     return (await $api.get<IFile[]>(url)).data;
   },
-  findByUUID: async (uuid: string): Promise<IFile> => {
+  findByUUID: async (uuid: string): Promise<IFile | undefined> => {
     try {
       const url = getFileUrl(uuid);
       const response = await $api.get(url);

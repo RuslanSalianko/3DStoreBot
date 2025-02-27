@@ -163,7 +163,6 @@ export default function FilesView({ files }: Props) {
               .map((row) => (
                 <FilesTableRow
                   key={row.id}
-                  id={row.id}
                   uuid={row.uuid}
                   name={row.name}
                   description={row.description}

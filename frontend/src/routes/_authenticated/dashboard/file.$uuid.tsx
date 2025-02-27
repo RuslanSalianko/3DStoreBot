@@ -30,10 +30,11 @@ export const Route = createFileRoute('/_authenticated/dashboard/file/$uuid')({
 function File() {
   const data = Route.useLoaderData();
 
-  const [file, setFile] = useState<IFile>(data.file);
-  const [categories, setCategories] = useState<ICategory[]>(data.categories);
+  const [file] = useState<IFile | undefined>(data.file);
+  const [categories] = useState<ICategory[]>(data.categories);
 
   const handleDownload = async () => {
+    if (!file) return;
     await FileService.downloadFile(file.uuid, file.format);
   };
 
@@ -47,87 +48,90 @@ function File() {
 
   return (
     <Page name="File">
-      <Stack
-        direction={{ xs: 'column', sm: 'column' }}
-        spacing={2}
-        sx={{
-          m: 3,
-          display: 'flex',
-          justifyContent: 'space-between',
-        }}
-      >
-        <TextField
-          label="Name"
-          value={file.name}
-          sx={{ label: { color: 'text.primary' }, width: '100%' }}
-        />
-        <TextField
-          label="Description"
-          value={file.description}
-          sx={{ label: { color: 'text.primary' }, width: '100%' }}
-          placeholder="Add description"
-        />
-        <FormControl fullWidth>
-          <InputLabel id="category-select-label">Category</InputLabel>
-          <Select
-            labelId="category-select-label"
-            id="category"
-            value={file.category?.id}
-            label="Age"
-            onChange={handleChange}
-          >
-            <MenuItem value={-1} onClick={handleAddCategory}>
-              <Iconify icon="add" sx={{ mr: 1 }} />
-              Add category
-            </MenuItem>
-            {categories.map((category) => (
-              <MenuItem value={category.id}>{category.name}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
+      {file && (
         <Stack
+          direction={{ xs: 'column', sm: 'column' }}
+          spacing={2}
           sx={{
             m: 3,
-            flexWrap: 'wrap',
-            justifyContent: 'left',
-            flexDirection: { xs: 'column', sm: 'row', gap: '16px' },
+            display: 'flex',
+            justifyContent: 'space-between',
           }}
         >
-          {file.images.map((image) => (
-            <>
-              <Card
-                variant="outlined"
-                key={image.uuid}
-                sx={{
-                  m: '0!important',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                <CardMedia
-                  component="img"
-                  image={ImageService.getImageUrl(image.uuid)}
-                  sx={{ width: 'fit-content', height: 200 }}
-                />
-              </Card>
-            </>
-          ))}
+          <TextField
+            label="Name"
+            value={file.name}
+            sx={{ label: { color: 'text.primary' }, width: '100%' }}
+          />
+          <TextField
+            label="Description"
+            value={file.description}
+            sx={{ label: { color: 'text.primary' }, width: '100%' }}
+            placeholder="Add description"
+          />
+          <FormControl fullWidth>
+            <InputLabel id="category-select-label">Category</InputLabel>
+            <Select
+              labelId="category-select-label"
+              id="category"
+              value={file.category?.id}
+              label="Age"
+              onChange={handleChange}
+            >
+              <MenuItem value={-1} onClick={handleAddCategory}>
+                <Iconify icon="add" sx={{ mr: 1 }} />
+                Add category
+              </MenuItem>
+              {categories.map((category) => (
+                <MenuItem value={category.id}>{category.name}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <Stack
+            sx={{
+              m: 3,
+              flexWrap: 'wrap',
+              justifyContent: 'left',
+              flexDirection: { xs: 'column', sm: 'row', gap: '16px' },
+            }}
+          >
+            {file.images.map((image) => (
+              <>
+                <Card
+                  variant="outlined"
+                  key={image.uuid}
+                  sx={{
+                    m: '0!important',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  <CardMedia
+                    component="img"
+                    image={ImageService.getImageUrl(image.uuid)}
+                    sx={{ width: 'fit-content', height: 200 }}
+                  />
+                </Card>
+              </>
+            ))}
+          </Stack>
+          <Stack
+            direction="row"
+            sx={{ flexWrap: 'wrap', justifyContent: 'space-between' }}
+          >
+            <Button variant="outlined" onClick={handleDownload}>
+              <Iconify icon="download" sx={{ mr: 1 }} />
+              {`${(file.size / (1024 * 1024)).toFixed(2)} M`}
+            </Button>
+            <Button variant="outlined" onClick={handleSave}>
+              Save
+            </Button>
+          </Stack>
         </Stack>
-        <Stack
-          direction="row"
-          sx={{ flexWrap: 'wrap', justifyContent: 'space-between' }}
-        >
-          <Button variant="outlined" onClick={handleDownload}>
-            <Iconify icon="download" sx={{ mr: 1 }} />
-            {`${(file.size / (1024 * 1024)).toFixed(2)} M`}
-          </Button>
-          <Button variant="outlined" onClick={handleSave}>
-            Save
-          </Button>
-        </Stack>
-      </Stack>
+      )}
+      {!file && <h1>File not found</h1>}
     </Page>
   );
 }
