@@ -21,6 +21,7 @@ import Iconify from '@components/iconify';
 import { IFile } from '@models/file.interface';
 import { ICategory } from '@models/category.interface';
 import { z } from 'zod';
+import { ModalAddCategory } from '@/sections/file/modal';
 
 export const Route = createFileRoute('/_authenticated/dashboard/file/$uuid')({
   loader: async ({ params }) => {
@@ -36,6 +37,7 @@ function File() {
 
   const [file, setFile] = useState<IFile | undefined>(data.file);
   const [categories] = useState<ICategory[]>(data.categories);
+  const [open, setOpen] = useState(false);
 
   if (!file) return <h1>File not found</h1>;
 
@@ -57,7 +59,13 @@ function File() {
     await FileService.downloadFile(file.uuid, file.format);
   };
 
-  const handleAddCategory = () => {};
+  const handleAddCategory = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   return (
     <Page name="File">
@@ -195,6 +203,7 @@ function File() {
           </Stack>
         </form>
       </Stack>
+      <ModalAddCategory open={open} handleClose={handleClose} />
     </Page>
   );
 }
