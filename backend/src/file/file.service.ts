@@ -5,6 +5,7 @@ import { FileService as FileUtilsService } from 'src/util/services/file.service'
 import { CreateFileDto } from './dto/create-file.dto';
 import { FileQueryDto } from './dto/query.dto';
 import { I18nTranslations } from 'src/language/type/i18n.generated';
+import { UpdateFileDto } from './dto/update-file.dto';
 
 @Injectable()
 export class FileService {
@@ -66,6 +67,18 @@ export class FileService {
     } catch (error) {
       Logger.error(error);
     }
+  }
+
+  async update(uuid: string, data: UpdateFileDto) {
+    await this.findByUuid(uuid);
+
+    return this.prisma.file.update({
+      where: {
+        uuid,
+      },
+      data,
+      ...this.queryRelation,
+    });
   }
 
   async findAll(query: FileQueryDto) {

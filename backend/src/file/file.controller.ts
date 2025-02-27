@@ -8,6 +8,8 @@ import {
   Res,
   UseGuards,
   Logger,
+  Put,
+  Body,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { join } from 'path';
@@ -15,6 +17,7 @@ import { JwtAuthGuard } from 'src/auth/guard/jwt.guard';
 import { FileService } from './file.service';
 import { FileQueryDto } from './dto/query.dto';
 import { FileDto } from './dto/file.dto';
+import { UpdateFileDto } from './dto/update-file.dto';
 
 @Controller('file')
 export class FileController {
@@ -56,6 +59,18 @@ export class FileController {
   async delete(@Param('uuid') uuid: string) {
     try {
       await this.fileService.delete(uuid);
+    } catch (error) {
+      Logger.log(error);
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put(':uuid')
+  async update(@Param('uuid') uuid: string, @Body() body: UpdateFileDto) {
+    try {
+      const file = await this.fileService.update(uuid, body);
+
+      return new FileDto(file);
     } catch (error) {
       Logger.log(error);
     }
