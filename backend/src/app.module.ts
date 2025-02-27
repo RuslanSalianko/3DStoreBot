@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import {
   AcceptLanguageResolver,
   HeaderResolver,
+  I18nJsonLoader,
   I18nModule,
 } from 'nestjs-i18n';
 import { DatabaseModule } from './database/database.module';
@@ -21,25 +22,34 @@ import { AppController } from './app.controller';
 
 @Module({
   imports: [
-    I18nModule.forRoot({
-      fallbackLanguage: 'en',
-      loaderOptions: {
-        path: join(__dirname, '/i18n/'),
-        watch: true,
-      },
-      resolvers: [AcceptLanguageResolver],
-    }),
-    //I18nModule.forRootAsync({
-    //  useFactory: (configService: ConfigService) => ({
-    //    fallbackLanguage: configService.get<string>('langApp'),
+    //  I18nModule.forRoot({
+    //    fallbackLanguage: 'en',
     //    loaderOptions: {
-    //      path: join(__dirname, '/i18n/'),
+    //      path: join(__dirname, '../src/i18n/'),
     //      watch: true,
     //    },
+    //    resolvers: [AcceptLanguageResolver],
     //  }),
-    //  resolvers: [new HeaderResolver(['x-lang']), AcceptLanguageResolver],
-    //  inject: [ConfigService],
-    //}),
+    I18nModule.forRootAsync({
+      useFactory: (configService: ConfigService) => ({
+        fallbackLanguage: configService.get<string>('langApp'),
+        fallbacks: {
+          'en-*': 'en',
+          'ru-*': 'ru',
+        },
+        loader: I18nJsonLoader,
+        loaderOptions: {
+          path: join(__dirname, '../src/language/'),
+          watch: true,
+        },
+        typesOutputPath: join(
+          __dirname,
+          '../src/language/type/i18n.generated.ts',
+        ),
+      }),
+      resolvers: [new HeaderResolver(['x-lang']), AcceptLanguageResolver],
+      inject: [ConfigService],
+    }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, 'static'),
       exclude: ['/api*'],
