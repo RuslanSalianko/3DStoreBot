@@ -14,3 +14,9 @@ export interface IFile {
   images: IImage[];
   category: null | ICategory;
 }
+
+export interface IUpdateFile {
+  name: string;
+  description?: string;
+  categoryId?: number;
+}

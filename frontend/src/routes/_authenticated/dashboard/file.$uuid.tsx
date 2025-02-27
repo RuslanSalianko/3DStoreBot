@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
+import { useForm } from '@tanstack/react-form';
+import { zodValidator } from '@tanstack/zod-form-adapter';
 
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
@@ -15,8 +17,10 @@ import { FileService, ImageService, CategoryService } from '@services/index';
 
 import Page from '@components/page';
 import Iconify from '@components/iconify';
+
 import { IFile } from '@models/file.interface';
 import { ICategory } from '@models/category.interface';
+import { z } from 'zod';
 
 export const Route = createFileRoute('/_authenticated/dashboard/file/$uuid')({
   loader: async ({ params }) => {
@@ -30,64 +34,120 @@ export const Route = createFileRoute('/_authenticated/dashboard/file/$uuid')({
 function File() {
   const data = Route.useLoaderData();
 
-  const [file] = useState<IFile | undefined>(data.file);
+  const [file, setFile] = useState<IFile | undefined>(data.file);
   const [categories] = useState<ICategory[]>(data.categories);
 
+  if (!file) return <h1>File not found</h1>;
+
+  const form = useForm({
+    defaultValues: {
+      name: file.name,
+      description: file.description,
+      categoryId: file.category?.id,
+    },
+    onSubmit: async ({ value }) => {
+      const updatedFile = await FileService.update(file?.uuid, value);
+
+      setFile(updatedFile);
+    },
+    validatorAdapter: zodValidator(),
+  });
+
   const handleDownload = async () => {
-    if (!file) return;
     await FileService.downloadFile(file.uuid, file.format);
   };
-
-  const handleSave = async () => {
-    console.log('save');
-  };
-
-  const handleChange = () => {};
 
   const handleAddCategory = () => {};
 
   return (
     <Page name="File">
-      {file && (
-        <Stack
-          direction={{ xs: 'column', sm: 'column' }}
-          spacing={2}
-          sx={{
-            m: 3,
+      <Stack
+        direction={{ xs: 'column', sm: 'column' }}
+        spacing={2}
+        sx={{
+          m: 3,
+          display: 'flex',
+          justifyContent: 'space-between',
+        }}
+      >
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            form.handleSubmit();
+          }}
+          style={{
             display: 'flex',
-            justifyContent: 'space-between',
+            flexDirection: 'column',
+            gap: '1rem',
           }}
         >
-          <TextField
-            label="Name"
-            value={file.name}
-            sx={{ label: { color: 'text.primary' }, width: '100%' }}
+          <form.Field
+            name="name"
+            validatorAdapter={zodValidator()}
+            validators={{
+              onChange: z.string().trim().min(5, {
+                message: 'Name must be at least 5 characters long',
+              }),
+            }}
+            children={(field) => (
+              <TextField
+                error={field.state.meta.errors.length > 0}
+                label="Name"
+                value={field.state.value}
+                onBlur={field.handleBlur}
+                onChange={(e) => field.handleChange(e.target.value)}
+                helperText={field.state.meta.errors[0]}
+                sx={{ label: { color: 'text.primary' }, width: '100%' }}
+              />
+            )}
           />
-          <TextField
-            label="Description"
-            value={file.description}
-            sx={{ label: { color: 'text.primary' }, width: '100%' }}
-            placeholder="Add description"
+          <form.Field
+            name="description"
+            validatorAdapter={zodValidator()}
+            validators={{
+              onChange: z.string().trim(),
+            }}
+            children={(field) => (
+              <TextField
+                error={field.state.meta.errors.length > 0}
+                label="Description"
+                value={field.state.value}
+                onBlur={field.handleBlur}
+                onChange={(e) => field.handleChange(e.target.value)}
+                helperText={field.state.meta.errors[0]}
+                sx={{ label: { color: 'text.primary' }, width: '100%' }}
+                placeholder="Add description"
+              />
+            )}
           />
-          <FormControl fullWidth>
-            <InputLabel id="category-select-label">Category</InputLabel>
-            <Select
-              labelId="category-select-label"
-              id="category"
-              value={file.category?.id}
-              label="Age"
-              onChange={handleChange}
-            >
-              <MenuItem value={-1} onClick={handleAddCategory}>
-                <Iconify icon="add" sx={{ mr: 1 }} />
-                Add category
-              </MenuItem>
-              {categories.map((category) => (
-                <MenuItem value={category.id}>{category.name}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
+          <form.Field
+            name="categoryId"
+            children={(field) => (
+              <FormControl fullWidth>
+                <InputLabel
+                  id="category-select-label"
+                  sx={{ color: 'text.primary' }}
+                >
+                  Category
+                </InputLabel>
+                <Select
+                  labelId="category-select-label"
+                  id="category"
+                  value={field.state.value}
+                  label="Category"
+                >
+                  <MenuItem value="0" onClick={handleAddCategory}>
+                    <Iconify icon="add" sx={{ mr: 1 }} />
+                    Add category
+                  </MenuItem>
+                  {categories.map((category) => (
+                    <MenuItem value={category.id}>{category.name}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
+          />
           <Stack
             sx={{
               m: 3,
@@ -125,13 +185,16 @@ function File() {
               <Iconify icon="download" sx={{ mr: 1 }} />
               {`${(file.size / (1024 * 1024)).toFixed(2)} M`}
             </Button>
-            <Button variant="outlined" onClick={handleSave}>
-              Save
-            </Button>
+            <form.Subscribe
+              children={() => (
+                <Button variant="outlined" type="submit">
+                  Save
+                </Button>
+              )}
+            />
           </Stack>
-        </Stack>
-      )}
-      {!file && <h1>File not found</h1>}
+        </form>
+      </Stack>
     </Page>
   );
 }

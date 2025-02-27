@@ -1,5 +1,5 @@
 import $api, { API_URL } from '@/api';
-import { IFile } from '@models/file.interface';
+import { IFile, IUpdateFile } from '@models/file.interface';
 import { buildUrlWithParams } from '@utils/url';
 
 type QueryFindAll = {
@@ -47,6 +47,19 @@ export const FileService = {
     try {
       const urlFile = getFileUrl(uuid);
       await $api.delete(urlFile);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  update: async (
+    uuid: string,
+    data: IUpdateFile,
+  ): Promise<IFile | undefined> => {
+    try {
+      const urlFile = getFileUrl(uuid);
+      const updatedFile = await $api.put<IFile>(urlFile, data);
+
+      return updatedFile.data;
     } catch (error) {
       console.log(error);
     }
