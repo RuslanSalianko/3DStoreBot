@@ -38,7 +38,7 @@ function File() {
 
   const [file, setFile] = useState<IFile | undefined>(data.file);
   const [categories, setCategories] = useState<ICategory[]>(data.categories);
-  const [idNewCategory, setIdNewCategory] = useState<number | null>(null);
+  const [categoryId, setCategoryId] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
 
   if (!file) return <h1>File not found</h1>;
@@ -47,11 +47,10 @@ function File() {
     defaultValues: {
       name: file.name,
       description: file.description,
-      categoryId: file.category?.id,
+      categoryId: file.category ? file.category.id : 0,
     },
     onSubmit: async ({ value }) => {
-      const updatedFile = await FileService.update(file?.uuid, value);
-
+      const updatedFile = await FileService.update(file.uuid, value);
       setFile(updatedFile);
     },
     validatorAdapter: zodValidator(),
@@ -68,7 +67,7 @@ function File() {
   const handleClose = async () => {
     const updateCategories = await CategoryService.findAll();
     setCategories(updateCategories);
-    setIdNewCategory(updateCategories.at(-1)?.id || 0);
+    setCategoryId(updateCategories.at(-1)?.id || 0);
 
     setOpen(false);
   };
@@ -148,14 +147,18 @@ function File() {
                 <Select
                   labelId="category-select-label"
                   id="category"
-                  value={field.state.value || idNewCategory}
+                  value={field.state.value || categoryId}
+                  onChange={(e) => field.handleChange(Number(e.target.value))}
+                  onBlur={(e) =>
+                    field.handleChange(categoryId || Number(e.target.value))
+                  }
                   label="Category"
                 >
                   {categories.map((category) => (
                     <MenuItem value={category.id}>{category.name}</MenuItem>
                   ))}
 
-                  <MenuItem value="0" onClick={handleAddCategory}>
+                  <MenuItem value={0} onClick={handleAddCategory}>
                     <Iconify icon="add" sx={{ mr: 1 }} />
                     Add category
                   </MenuItem>
