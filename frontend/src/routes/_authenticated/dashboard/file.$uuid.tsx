@@ -36,7 +36,8 @@ function File() {
   const data = Route.useLoaderData();
 
   const [file, setFile] = useState<IFile | undefined>(data.file);
-  const [categories] = useState<ICategory[]>(data.categories);
+  const [categories, setCategories] = useState<ICategory[]>(data.categories);
+  const [idNewCategory, setIdNewCategory] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
 
   if (!file) return <h1>File not found</h1>;
@@ -63,7 +64,11 @@ function File() {
     setOpen(true);
   };
 
-  const handleClose = () => {
+  const handleClose = async () => {
+    const updateCategories = await CategoryService.findAll();
+    setCategories(updateCategories);
+    setIdNewCategory(updateCategories.at(-1)?.id || 0);
+
     setOpen(false);
   };
 
@@ -142,16 +147,17 @@ function File() {
                 <Select
                   labelId="category-select-label"
                   id="category"
-                  value={field.state.value}
+                  value={field.state.value || idNewCategory}
                   label="Category"
                 >
+                  {categories.map((category) => (
+                    <MenuItem value={category.id}>{category.name}</MenuItem>
+                  ))}
+
                   <MenuItem value="0" onClick={handleAddCategory}>
                     <Iconify icon="add" sx={{ mr: 1 }} />
                     Add category
                   </MenuItem>
-                  {categories.map((category) => (
-                    <MenuItem value={category.id}>{category.name}</MenuItem>
-                  ))}
                 </Select>
               </FormControl>
             )}

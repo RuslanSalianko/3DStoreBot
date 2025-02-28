@@ -8,6 +8,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import { CategoryService } from '@/api/services';
 
 const style = {
   position: 'absolute',
@@ -30,6 +31,7 @@ export function ModalAddCategory({ open, handleClose }: Props) {
       name: '',
     },
     onSubmit: async ({ value }) => {
+      await CategoryService.create(value);
       handleClose();
     },
     validatorAdapter: zodValidator(),
