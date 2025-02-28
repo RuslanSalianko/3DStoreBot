@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 import { useForm } from '@tanstack/react-form';
 import { zodValidator } from '@tanstack/zod-form-adapter';
+import { z } from 'zod';
 
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
@@ -18,10 +19,10 @@ import { FileService, ImageService, CategoryService } from '@services/index';
 import Page from '@components/page';
 import Iconify from '@components/iconify';
 
+import { ModalAddCategory } from '@sections/file/modal';
+
 import { IFile } from '@models/file.interface';
 import { ICategory } from '@models/category.interface';
-import { z } from 'zod';
-import { ModalAddCategory } from '@/sections/file/modal';
 
 export const Route = createFileRoute('/_authenticated/dashboard/file/$uuid')({
   loader: async ({ params }) => {
