@@ -1,5 +1,4 @@
 import { useForm } from '@tanstack/react-form';
-import { zodValidator } from '@tanstack/zod-form-adapter';
 import { z } from 'zod';
 
 import Modal from '@mui/material/Modal';
@@ -34,7 +33,6 @@ export function ModalAddCategory({ open, handleClose }: Props) {
       await CategoryService.create(value);
       handleClose();
     },
-    validatorAdapter: zodValidator(),
   });
 
   return (
@@ -66,14 +64,13 @@ export function ModalAddCategory({ open, handleClose }: Props) {
           >
             <form.Field
               name="name"
-              validatorAdapter={zodValidator()}
               validators={{
                 onChange: z.string().trim().min(3, { message: '' }),
               }}
               children={(field) => (
                 <TextField
                   error={field.state.meta.errors.length > 0}
-                  helperText={field.state.meta.errors[0]}
+                  // helperText={field.state.meta.errors[0]}
                   label="Name"
                   value={field.state.value}
                   onBlur={field.handleBlur}

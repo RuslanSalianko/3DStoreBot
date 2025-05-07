@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 import { useForm } from '@tanstack/react-form';
-import { zodValidator } from '@tanstack/zod-form-adapter';
 import { z } from 'zod';
 
 import Stack from '@mui/material/Stack';
@@ -53,7 +52,6 @@ function File() {
       const updatedFile = await FileService.update(file.uuid, value);
       setFile(updatedFile);
     },
-    validatorAdapter: zodValidator(),
   });
 
   const handleDownload = async () => {
@@ -97,7 +95,6 @@ function File() {
         >
           <form.Field
             name="name"
-            validatorAdapter={zodValidator()}
             validators={{
               onChange: z.string().trim().min(5, {
                 message: 'Name must be at least 5 characters long',
@@ -110,14 +107,13 @@ function File() {
                 value={field.state.value}
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
-                helperText={field.state.meta.errors[0]}
+                // helperText={field.state.meta.errors[0]}
                 sx={{ label: { color: 'text.primary' }, width: '100%' }}
               />
             )}
           />
           <form.Field
             name="description"
-            validatorAdapter={zodValidator()}
             validators={{
               onChange: z.string().trim(),
             }}
@@ -128,7 +124,7 @@ function File() {
                 value={field.state.value}
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
-                helperText={field.state.meta.errors[0]}
+                // helperText={field.state.meta.errors[0]}
                 sx={{ label: { color: 'text.primary' }, width: '100%' }}
                 placeholder="Add description"
               />
