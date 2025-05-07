@@ -50,6 +50,7 @@ import { AppController } from './app.controller';
       resolvers: [new HeaderResolver(['x-lang']), AcceptLanguageResolver],
       inject: [ConfigService],
     }),
+
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, 'static'),
       exclude: ['/api*'],
@@ -58,6 +59,7 @@ import { AppController } from './app.controller';
       isGlobal: true,
       load: [configuration],
     }),
+
     DatabaseModule,
     BotModule,
     UserModule,

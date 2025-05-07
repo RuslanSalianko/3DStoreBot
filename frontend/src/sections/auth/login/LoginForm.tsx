@@ -1,5 +1,4 @@
 import { useForm } from '@tanstack/react-form';
-import { zodValidator } from '@tanstack/zod-form-adapter';
 import { z } from 'zod';
 
 import Stack from '@mui/material/Stack';
@@ -23,7 +22,6 @@ export default function LoginForm() {
       }
       await login(value.email, value.password);
     },
-    validatorAdapter: zodValidator(),
   });
 
   return (
@@ -43,7 +41,6 @@ export default function LoginForm() {
         >
           <form.Field
             name="email"
-            validatorAdapter={zodValidator()}
             validators={{
               onChange: z.string().email(),
             }}
@@ -62,9 +59,9 @@ export default function LoginForm() {
                   field.setValue(e.target.value);
                   clearErrorMessage();
                 }}
-                helperText={
-                  field.state.meta.errors[0] || (!isGetPassword && errorMessage)
-                }
+                // helperText={
+                //   field.state.meta.errors[0] || (!isGetPassword && errorMessage)
+                // }
                 sx={{ label: { color: 'text.primary' } }}
               />
             )}

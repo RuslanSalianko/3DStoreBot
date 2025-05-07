@@ -4,9 +4,11 @@ import { ConfigService } from '@nestjs/config';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { getBotToken } from 'nestjs-telegraf';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.set('query parser', 'extended');
   const bot = app.get(getBotToken());
 
   const configService = app.get(ConfigService);
