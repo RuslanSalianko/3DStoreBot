@@ -33,6 +33,11 @@ export function ModalAddCategory({ open, handleClose }: Props) {
       await CategoryService.create(value);
       handleClose();
     },
+    validators: {
+      onChange: z.object({
+        name: z.string().trim().min(3, { message: 'Min 3 symbols' }),
+      }),
+    },
   });
 
   return (
@@ -70,7 +75,7 @@ export function ModalAddCategory({ open, handleClose }: Props) {
               children={(field) => (
                 <TextField
                   error={field.state.meta.errors.length > 0}
-                  // helperText={field.state.meta.errors[0]}
+                  helperText={field.state.meta.errors[0]?.message}
                   label="Name"
                   value={field.state.value}
                   onBlur={field.handleBlur}

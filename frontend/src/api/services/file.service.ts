@@ -52,10 +52,11 @@ export const FileService = {
     }
   },
   update: async (
-    uuid: string,
+    uuid: string | undefined,
     data: IUpdateFile,
   ): Promise<IFile | undefined> => {
     try {
+      if (!uuid) throw new Error('uuid not found');
       const urlFile = getFileUrl(uuid);
       const updatedFile = await $api.put<IFile>(urlFile, data);
 

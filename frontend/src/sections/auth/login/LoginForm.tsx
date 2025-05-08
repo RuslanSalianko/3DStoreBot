@@ -22,6 +22,12 @@ export default function LoginForm() {
       }
       await login(value.email, value.password);
     },
+    validators: {
+      onChange: z.object({
+        email: z.string().email('Invalid email'),
+        password: z.string(),
+      }),
+    },
   });
 
   return (
@@ -59,9 +65,10 @@ export default function LoginForm() {
                   field.setValue(e.target.value);
                   clearErrorMessage();
                 }}
-                // helperText={
-                //   field.state.meta.errors[0] || (!isGetPassword && errorMessage)
-                // }
+                helperText={
+                  field.state.meta.errors[0]?.message ||
+                  (!isGetPassword && errorMessage)
+                }
                 sx={{ label: { color: 'text.primary' } }}
               />
             )}

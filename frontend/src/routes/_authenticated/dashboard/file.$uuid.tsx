@@ -40,19 +40,26 @@ function File() {
   const [categoryId, setCategoryId] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
 
-  if (!file) return <h1>File not found</h1>;
-
   const form = useForm({
     defaultValues: {
-      name: file.name,
-      description: file.description,
-      categoryId: file.category ? file.category.id : 0,
+      name: file?.name || '',
+      description: file?.description || '',
+      categoryId: file?.category ? file.category.id : 0,
     },
     onSubmit: async ({ value }) => {
-      const updatedFile = await FileService.update(file.uuid, value);
+      const updatedFile = await FileService.update(file?.uuid, value);
       setFile(updatedFile);
     },
+    validators: {
+      onChange: z.object({
+        name: z.string().trim().min(5, { message: 'Min 5 symbols' }),
+        description: z.string().trim().min(5, { message: 'Min 5 symbols' }),
+        categoryId: z.number(),
+      }),
+    },
   });
+
+  if (!file) return <h1>File not found</h1>;
 
   const handleDownload = async () => {
     await FileService.downloadFile(file.uuid, file.format);
@@ -107,7 +114,7 @@ function File() {
                 value={field.state.value}
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
-                // helperText={field.state.meta.errors[0]}
+                helperText={field.state.meta.errors[0]?.message}
                 sx={{ label: { color: 'text.primary' }, width: '100%' }}
               />
             )}
@@ -124,7 +131,7 @@ function File() {
                 value={field.state.value}
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
-                // helperText={field.state.meta.errors[0]}
+                helperText={field.state.meta.errors[0]?.message}
                 sx={{ label: { color: 'text.primary' }, width: '100%' }}
                 placeholder="Add description"
               />
