@@ -70,7 +70,15 @@ export class FileService {
   }
 
   async update(uuid: string, data: UpdateFileDto) {
-    await this.findByUuid(uuid);
+    const file = await this.findByUuid(uuid);
+
+    if (!file) {
+      throw new NotFoundException(this.i18n.t('exception.fileNotFound'));
+    }
+
+    if (data.categoryId === 0) {
+      data.categoryId = null;
+    }
 
     return this.prisma.file.update({
       where: {
